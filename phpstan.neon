@@ -1,0 +1,11 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+parameters:
+    level: 6
+    paths:
+        - ./app
+        - ./tests
+    reportUnmatchedIgnoredErrors: false
+    # PHPDocのタイプヒントでクラスのジェネリクス型チェックをしないよう設定
+    ignoreErrors:
+        - identifier: missingType.generics
