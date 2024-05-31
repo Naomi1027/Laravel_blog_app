@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      dockerfile: ./docker/app/Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 5173:5173
+
+  web:
+    build:
+      dockerfile: ./docker/web/Dockerfile
+    ports:
+      - 8080:80
+    depends_on:
+      - app
+    volumes:
+      - .:/app
+
+  db:
+    build:
+      dockerfile: ./docker/db/Dockerfile
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=training
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=password
+      - PGTZ=Asia/Tokyo
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+
+
+  mail:
+    image: axllent/mailpit:v1.13
+    ports:
+      - '8025:8025' #web上でmailサーバのGUIを表示させるポート
+      - '1025:1025' #smtpサーバ
+    environment:
+      - MP_DATA_FILE=/data/mailpit.db # メールの内容をディスクに保存する場合のパス指定
+    volumes:
+      - mp-data-file:/data # 永続化する
+
+# コンテナの動作を終了したあとでも、起動したら終了前のデータの状態を引っ張ってこられるようにしている
+volumes:
+  postgres-volume:
+  mp-data-file:

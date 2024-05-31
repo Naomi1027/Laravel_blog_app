@@ -1,0 +1,22 @@
+name: FEATURE ISSUE
+description: Feature単位で作成するIssueのテンプレート
+title: "[]"
+body:
+  - type: textarea
+    attributes:
+      label: 何をやるのか
+      description: このIssueで何を行うのかを記載してください。
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: なぜやるのか
+      description: このIssueを行う理由を記載してください。
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: どうやってやるのか
+      description: このIssueをどのように行うのかを記載してください。Ex. タスクばらしなど
+    validations:
+      required: false

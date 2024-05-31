@@ -1,0 +1,29 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "database/migrations",
+        "public",
+        "storage",
+        "vendor",
+        "bootstrap/cache"
+    ],
+    "rules": {
+        "concat_space": false,
+        "date_time_immutable": true,
+        "declare_parentheses": false,
+        "declare_strict_types": false,
+        "final_class": false,
+        "mb_str_functions": true,
+        "new_with_braces": true,
+        "phpdoc_align": {
+            "align": "left"
+        },
+        "line_ending": true,
+        "method_chaining_indentation": true,
+        "ordered_imports": {
+            "sort_algorithm": "alpha"
+        },
+        "clean_namespace": true,
+        "no_superfluous_phpdoc_tags": false
+    }
+}
