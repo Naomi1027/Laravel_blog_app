@@ -15,7 +15,7 @@ class ArticleController extends Controller
     {
         $articles = Article::all();
 
-        return view('articles.index',[
+        return view('articles.index', [
             'articles' => $articles,
         ]);
     }
