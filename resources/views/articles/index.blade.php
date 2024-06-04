@@ -3,11 +3,10 @@
 @section('content')
 
 <div class="flex flex-col gap-2">
-    @foreach ( [1, 2, 3, 4] as $index )
+    @foreach ( $articles as $article )
     <article class="w-full rounded-lg border-gray-400 bg-stone-100 p-4 border-2">
-        <span class="text-xs mb-4 inline-block">yyyy年mm月dd日</span>
-        <h2 class="text-md font-bold mb-1">タイトル</h2>
-        <p class="text-md">説明文</p>
+        <span class="text-xs mb-4 inline-block">{{ $article->created_at->format('Y年m月d日') }}</span>
+        <h2 class="text-md font-bold">{{ $article->title }}</h2>
     </article>
     @endforeach
 </div>
