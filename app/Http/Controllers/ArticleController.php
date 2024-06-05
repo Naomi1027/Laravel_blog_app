@@ -45,7 +45,7 @@ class ArticleController extends Controller
         $article = Article::find($articleId);
 
         return view('articles.show', [
-            'article' => $article
+            'article' => $article,
         ]);
     }
 
