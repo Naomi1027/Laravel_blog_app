@@ -40,9 +40,13 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Article $article): void
+    public function show(int $articleId): View
     {
-        //
+        $article = Article::findOrFail($articleId);
+
+        return view('articles.show', [
+            'article' => $article,
+        ]);
     }
 
     /**
