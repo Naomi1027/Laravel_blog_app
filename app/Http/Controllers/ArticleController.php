@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ArticleController extends Controller
@@ -24,17 +25,20 @@ class ArticleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): void
+    public function create(): View
     {
-        //
+        return view('articles.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreArticleRequest $request): void
+    public function store(StoreArticleRequest $request): RedirectResponse
     {
-        //
+        $validated = $request->validated();
+        Article::create($validated);
+
+        return redirect('/');
     }
 
     /**
