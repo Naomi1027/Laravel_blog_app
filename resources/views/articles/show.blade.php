@@ -19,7 +19,7 @@
     </article>
     <div class="flex gap-12 justify-center">
         <a href="{{ route('articles.index') }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
-        <a href="#" class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
+        <a href="{{ route('articles.edit', ['articleId' => $article->id]) }}" class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
         <a href="#" class="w-24 text-center rounded-md bg-red-700 p-2 inline-block tracking-normal text-white font-bold">削除する</a>
     </div>
 </div>
