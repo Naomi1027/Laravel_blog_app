@@ -73,7 +73,7 @@ class ArticleController extends Controller
         $validated = $request->validated();
         Article::where('id', $articleId)->update($validated);
 
-        return redirect()->route('articles.show', [ 'articleId' => $articleId ]);
+        return redirect()->route('articles.show', ['articleId' => $articleId]);
     }
 
     /**
