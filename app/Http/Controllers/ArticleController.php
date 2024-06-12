@@ -56,17 +56,24 @@ class ArticleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Article $article): void
+    public function edit(int $articleId): View
     {
-        //
+        $article = Article::findOrFail($articleId);
+
+        return view('articles.edit', [
+            'article' => $article,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateArticleRequest $request, Article $article): void
+    public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
-        //
+        $validated = $request->validated();
+        Article::where('id', $articleId)->update($validated);
+
+        return redirect()->route('articles.show', ['articleId' => $articleId]);
     }
 
     /**
