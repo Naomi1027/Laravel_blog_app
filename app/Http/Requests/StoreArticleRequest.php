@@ -35,7 +35,7 @@ class StoreArticleRequest extends FormRequest
         return [
             'title.required' => 'タイトルは必須です。',
             'title.string' => 'タイトルは文字列にして下さい。',
-            'title.max:255' => 'タイトルは255文字以内でお願いします。',
+            'title.max' => 'タイトルは:max文字以内でお願いします。',
             'content.required' => '本文は必須です。',
             'content.string' => '本文は文字列にして下さい。',
         ];
