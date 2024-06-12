@@ -11,7 +11,7 @@ class UpdateArticleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,22 @@ class UpdateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'タイトルは必須です。',
+            'title.string' => 'タイトルは文字列にして下さい。',
+            'title.max' => 'タイトルは:max文字以内でお願いします。',
+            'content.required' => '本文は必須です。',
+            'content.string' => '本文は文字列にして下さい。',
         ];
     }
 }
