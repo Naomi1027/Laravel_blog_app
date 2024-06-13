@@ -20,3 +20,4 @@ Route::get('/articles/create', [ArticleController::class, 'create'])->name('arti
 Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
 Route::get('/articles/{articleId}/edit', [ArticleController::class, 'edit'])->where('articleId', '[0-9]+')->name('articles.edit');
 Route::post('/articles/{articleId}', [ArticleController::class, 'update'])->name('articles.update');
+Route::delete('/articles/{articleId}', [ArticleController::class, 'destroy'])->name('articles.destroy');
