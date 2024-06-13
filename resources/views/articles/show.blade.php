@@ -20,7 +20,11 @@
     <div class="flex gap-12 justify-center">
         <a href="{{ route('articles.index') }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
         <a href="{{ route('articles.edit', ['articleId' => $article->id]) }}" class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
-        <a href="#" class="w-24 text-center rounded-md bg-red-700 p-2 inline-block tracking-normal text-white font-bold">削除する</a>
+        <form method="POST" action="{{ route('articles.destroy', ['articleId' => $article->id]) }}">
+            @method('delete')
+            @csrf
+            <input type="submit" value="削除する" onclick='return confirm("本当に削除しますか？")' class="cursor-pointer w-24 text-center rounded-md bg-red-700 p-2 inline-block tracking-normal text-white font-bold">
+        </form>
     </div>
 </div>
 
