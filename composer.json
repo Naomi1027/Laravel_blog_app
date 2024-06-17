@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.8"
     },
     "require-dev": {
+        "askdkc/breezejp": "^1.8",
         "fakerphp/faker": "^1.9.1",
         "larastan/larastan": "^2.0",
         "laravel/breeze": "*",
