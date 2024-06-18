@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-guest-layout>
 
 <div class="mt-20 mx-auto w-4/5">
     <form method="POST" action="{{ route('articles.update', ['articleId' => $article->id]) }}">
@@ -28,4 +26,4 @@
     </form>
 </div>
 
-@endsection
+</x-guest-layout>

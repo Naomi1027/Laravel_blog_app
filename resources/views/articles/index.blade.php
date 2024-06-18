@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-guest-layout>
 
 <div class="flex flex-col gap-2">
     @foreach ( $articles as $article )
@@ -15,4 +13,4 @@
     <a href="{{ route('articles.create')}}" class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">投稿する</a>
 </div>
 
-@endsection
+</x-guest-layout>

@@ -23,9 +23,9 @@ Route::get('/articles/{articleId}/edit', [ArticleController::class, 'edit'])->wh
 Route::post('/articles/{articleId}', [ArticleController::class, 'update'])->name('articles.update');
 Route::delete('/articles/{articleId}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
