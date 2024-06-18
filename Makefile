@@ -44,7 +44,7 @@ npm-install:
 	docker compose exec app npm install
 
 larastan:
-	docker compose exec app ./vendor/bin/phpstan analyse -c phpstan.neon
+	docker compose exec app php -d memory_limit=1G ./vendor/bin/phpstan analyse -c phpstan.neon
 
 pint:
 	docker compose exec app ./vendor/bin/pint

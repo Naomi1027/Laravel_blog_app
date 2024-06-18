@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<x-guest-layout>
 
 <div class="mt-20 mx-auto w-4/5">
     <article>
@@ -28,4 +26,4 @@
     </div>
 </div>
 
-@endsection
+</x-guest-layout>
