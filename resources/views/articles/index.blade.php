@@ -3,6 +3,9 @@
 <div class="flex flex-col gap-2">
     @foreach ( $articles as $article )
     <article class="w-full rounded-lg border-gray-400 bg-stone-100 p-4 border-2">
+        <div>
+            <p class="text-xm mb-4 inline-block">{{ $article->user->name }}</p>
+        </div>
         <span class="text-xs mb-4 inline-block">{{ $article->created_at->format('Y年m月d日') }}</span>
         <a href="{{ route('articles.show', ['articleId' => $article->id]) }}"><h2 class="text-md font-bold">{{ $article->title }}</h2></a>
     </article>
