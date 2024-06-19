@@ -22,7 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'icon_path'
+        'icon_path',
     ];
 
     /**
@@ -45,7 +45,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    public function articles():HasMany
+    public function articles(): HasMany
     {
         return $this->hasMany(Article::class);
     }
