@@ -15,7 +15,7 @@ class ArticleController extends Controller
      */
     public function index(): View
     {
-        $articles = Article::all();
+        $articles = Article::with('user')->get();
 
         return view('articles.index', [
             'articles' => $articles,
