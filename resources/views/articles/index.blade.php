@@ -4,7 +4,7 @@
     @foreach ( $articles as $article )
     <article class="w-full rounded-lg border-gray-400 bg-stone-100 p-4 border-2 flex">
         <div class="mr-8">
-            <img src="{{ $article->user->icon_path }}" alt="" class="w-24">
+            <img src="{{ $article->user->icon_path }}" alt="" class="w-24 h-24 rounded-full">
         </div>
         <div>
             <div>
