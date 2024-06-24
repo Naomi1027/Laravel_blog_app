@@ -1,9 +1,9 @@
 <?php
 
 namespace Database\Seeders;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use App\Models\Tag;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 
 class TagSeeder extends Seeder
