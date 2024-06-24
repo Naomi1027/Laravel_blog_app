@@ -14,7 +14,7 @@
             <a href="{{ route('articles.show', ['articleId' => $article->id]) }}"><h2 class="text-md font-bold">{{ $article->title }}</h2></a>
         @if ( $article->tags()->exists())
             @foreach ( $article->tags as $tag )
-            <p class="text-xm mt-4 mr-4 rounded bg-gray-300 inline-block">{{ $tag->name }}</p>
+            <p class="text-xm mt-4 mr-4 p-2 rounded bg-gray-300 inline-block">{{ $tag->name }}</p>
             @endforeach
         @endif
         </div>
