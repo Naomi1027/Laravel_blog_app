@@ -17,8 +17,8 @@ class TagFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->numerify('tag-##'),
-            'key' => fake()->numerify('key-##'),
+            'name' => fake(),
+            'key' => fake(),
         ];
     }
 }
