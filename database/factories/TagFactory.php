@@ -16,11 +16,9 @@ class TagFactory extends Factory
      */
     public function definition(): array
     {
-        $number = fake()->numberBetween(1, 100);
-
         return [
-            'name' => 'tag-' . $number,
-            'key' => 'key-' . $number,
+            'name' => fake(),
+            'key' => fake(),
         ];
     }
 }
