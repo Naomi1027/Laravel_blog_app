@@ -37,5 +37,5 @@ class TagSeeder extends Seeder
                 ['name' => 'ビール', 'key' => 'beer'],
             )
             ->create();
-        }
     }
+}
