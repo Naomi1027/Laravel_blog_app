@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Article;
+use App\Models\Tag;
 use Illuminate\Database\Seeder;
 
 class ArticleSeeder extends Seeder
@@ -12,8 +13,15 @@ class ArticleSeeder extends Seeder
      */
     public function run(): void
     {
+        $tags = Tag::all();
+
         Article::factory()
             ->count(50)
-            ->create();
+            ->create()
+            ->each(function ($article) use ($tags) {
+                $article->tags()->attach(
+                    $tags->random(random_int(1, 3))
+                );
+            });
     }
 }
