@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-app-layout>
 
 <div class="mt-20 mx-auto w-4/5">
     <form method="POST" action="{{ route('articles.update', ['articleId' => $article->id]) }}">
@@ -20,10 +20,10 @@
             </div>
         </div>
         <div class="flex gap-12 justify-center">
-            <a href="{{ route('articles.show', ['articleId' => $article->id ]) }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
+            <a href="{{ route('articles.show', ['userName' => $article->user->name, 'articleId' => $article->id ]) }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
             <button class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold"type="submit" value="投稿する">更新する</button>
         </div>
     </form>
 </div>
 
-</x-guest-layout>
+</x-app-layout>
