@@ -38,8 +38,7 @@ class ArticleController extends Controller
     {
         $user_id = ['user_id' => Auth::id()];
         $validated = $request->validated();
-        $article = array_merge($user_id, $validated);
-        Article::create($article);
+        Article::create(array_merge($user_id, $validated));
 
         return redirect('/');
     }
@@ -50,9 +49,11 @@ class ArticleController extends Controller
     public function show(string $userName, int $articleId): View
     {
         $article = Article::findOrFail($articleId);
+        $user_id = Auth::id();
 
         return view('articles.show', [
             'article' => $article,
+            'user_id' => $user_id,
         ]);
     }
 
