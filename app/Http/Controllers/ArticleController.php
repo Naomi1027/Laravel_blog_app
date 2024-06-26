@@ -50,6 +50,7 @@ class ArticleController extends Controller
     public function show(string $userName, int $articleId): View
     {
         $article = Article::findOrFail($articleId);
+
         return view('articles.show', [
             'article' => $article,
         ]);
