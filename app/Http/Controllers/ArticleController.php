@@ -6,6 +6,7 @@ use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ArticleController extends Controller
@@ -35,8 +36,10 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request): RedirectResponse
     {
+        $user_id = ['user_id' => Auth::id()];
         $validated = $request->validated();
-        Article::create($validated);
+        $article = array_merge($user_id, $validated);
+        Article::create($article);
 
         return redirect('/');
     }
@@ -44,10 +47,9 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $articleId): View
+    public function show(string $userName, int $articleId): View
     {
         $article = Article::findOrFail($articleId);
-
         return view('articles.show', [
             'article' => $article,
         ]);
@@ -56,7 +58,7 @@ class ArticleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $articleId): View
+    public function edit(string $userName, int $articleId): View
     {
         $article = Article::findOrFail($articleId);
 
@@ -72,8 +74,9 @@ class ArticleController extends Controller
     {
         $validated = $request->validated();
         Article::where('id', $articleId)->update($validated);
+        $article = Article::findOrFail($articleId);
 
-        return redirect()->route('articles.show', ['articleId' => $articleId]);
+        return redirect()->route('articles.show', ['userName' => $article->user->name, 'articleId' => $articleId]);
     }
 
     /**
