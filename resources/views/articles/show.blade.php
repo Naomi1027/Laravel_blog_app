@@ -26,6 +26,7 @@
             <p class="mb-20">{{ $article->content }}</p>
         </div>
     </article>
+    @if ($user_id == $article->user->id)
     <div class="flex gap-12 justify-center">
         <a href="{{ route('articles.index') }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
         <a href="{{ route('articles.edit', ['userName' => $article->user->name, 'articleId' => $article->id]) }}" class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
@@ -35,6 +36,7 @@
             <input type="submit" value="削除する" onclick='return confirm("本当に削除しますか？")' class="cursor-pointer w-24 text-center rounded-md bg-red-700 p-2 inline-block tracking-normal text-white font-bold">
         </form>
     </div>
+    @endif
 </div>
 
 </x-guest-layout>
