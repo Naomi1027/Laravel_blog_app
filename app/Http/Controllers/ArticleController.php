@@ -36,7 +36,7 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request): RedirectResponse
     {
-        $id = ['userId' => Auth::id()];
+        $id = ['user_id' => Auth::id()];
         $validated = $request->validated();
         Article::create(array_merge($id, $validated));
 
