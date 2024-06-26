@@ -26,7 +26,7 @@
             <p class="mb-20">{{ $article->content }}</p>
         </div>
     </article>
-    @if ($user_id == $article->user->id)
+    @if ($userId === $article->user->id)
     <div class="flex gap-12 justify-center">
         <a href="{{ route('articles.index') }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
         <a href="{{ route('articles.edit', ['userName' => $article->user->name, 'articleId' => $article->id]) }}" class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>

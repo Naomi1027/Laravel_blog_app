@@ -36,9 +36,9 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request): RedirectResponse
     {
-        $user_id = ['user_id' => Auth::id()];
+        $id = ['userId' => Auth::id()];
         $validated = $request->validated();
-        Article::create(array_merge($user_id, $validated));
+        Article::create(array_merge($id, $validated));
 
         return redirect('/');
     }
@@ -49,11 +49,11 @@ class ArticleController extends Controller
     public function show(string $userName, int $articleId): View
     {
         $article = Article::findOrFail($articleId);
-        $user_id = Auth::id();
+        $userId = Auth::id();
 
         return view('articles.show', [
             'article' => $article,
-            'user_id' => $user_id,
+            'userId' => $userId,
         ]);
     }
 
