@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-app-layout>
 
 <div class="mt-20 mx-auto w-4/5">
     <form method="POST" action="{{ route('articles.store') }}">
@@ -26,4 +26,4 @@
     </form>
 </div>
 
-</x-guest-layout>
+</x-app-layout>

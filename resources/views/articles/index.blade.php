@@ -8,10 +8,10 @@
         </div>
         <div>
             <div>
-                <p class="text-xm mb-4 inline-block">{{ $article->user->name }}</p>
+                <p class="text-xm mb-4 inline-block">{{ $article->user->displayName }}</p>
             </div>
             <span class="text-xs mb-4 inline-block">{{ $article->created_at->format('Y年m月d日') }}</span>
-            <a href="{{ route('articles.show', ['articleId' => $article->id]) }}"><h2 class="text-md font-bold">{{ $article->title }}</h2></a>
+            <a href="{{ route('articles.show', ['userName' => $article->user->name, 'articleId' => $article->id]) }}"><h2 class="text-md font-bold">{{ $article->title }}</h2></a>
         @if ( $article->tags()->exists())
             @foreach ( $article->tags as $tag )
             <p class="text-xm mt-4 mr-4 p-2 rounded bg-gray-300 inline-block">{{ $tag->name }}</p>
