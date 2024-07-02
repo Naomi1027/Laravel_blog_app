@@ -2,6 +2,7 @@
 
 <div class="mt-20 mx-auto w-full">
     <article class="flex">
+        @foreach ($articles as $article)
         <div class="w-40">
             <img src="{{ $article->user->icon_path }}" alt="" class="w-24 h-24 rounded-full">
         </div>
@@ -9,8 +10,8 @@
             <div class="flex relative">
                 <h2 class="mb-6 text-2xl">{{ $article->user->display_name }}</h2>
                 <div class="absolute top-0 right-0">
-                @if ($user->id === $article->user->id)
-                    <div class="flex gap-12 justify-center">
+                @if ($userId === $article->user->id)
+                    <div class="flex-col space-y-2 ml-auto">
                         <a href="{{ route('articles.edit', ['userName' => $article->user->name, 'articleId' => $article->id]) }}" class=" w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
                         <form method="POST" action="{{ route('articles.destroy', ['articleId' => $article->id]) }}">
                             @method('delete')
@@ -43,30 +44,29 @@
             </div>
             <p class="mb-20">{{ $article->content }}</p>
         </div>
+        @endforeach
     </article>
-    @if ($article->comments()->exists())
-    @foreach ($comments as $comment )
+    @foreach ( $article->comments as $comment )
     <section class="border-2 border-gray-400 mt-4 p-8">
         <h3 class="text-2xl ml-4 mb-4">コメント</h3>
         <div class="flex mb-4">
-            <img src="{{ $user->icon_path }}" alt="" class="w-24 h-24 rounded-full">
+            <img src="{{ $comment->user->icon_path }}" alt="" class="w-24 h-24 rounded-full">
             <h2 class="mb-6 ml-4 text-2xl">{{ $comment->user->display_name }}</h2>
-            @if ($user->id === $comment->user->id)
-                    <div class="flex gap-12 justify-center ml-80">
-                        <span>{{ $comment->updated_at->format('Y年m月d日') }}</span>
-                        <a href="" class=" h-10 w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
-                        <form method="POST" action="">
-                            @method('delete')
-                            @csrf
-                            <input type="submit" value="削除する" onclick='return confirm("本当に削除しますか？")' class="cursor-pointer w-24 text-center rounded-md bg-red-700 p-2 inline-block tracking-normal text-white font-bold">
-                        </form>
-                    </div>
-                @endif
+            @if ($userId === $comment->user->id)
+            <div class="flex-col space-y-2 ml-auto">
+                <p>{{ $comment->updated_at->format('Y年m月d日') }}</p>
+                <a href="" class=" h-10 w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
+                <form method="POST" action="">
+                    @method('delete')
+                    @csrf
+                    <input type="submit" value="削除する" onclick='return confirm("本当に削除しますか？")' class="cursor-pointer w-24 text-center rounded-md bg-red-700 p-2 inline-block tracking-normal text-white font-bold">
+                </form>
+            </div>
+            @endif
         </div>
         <p>{{ $comment->comment }}</p>
     </section>
     @endforeach
-    @endif
 </div>
 
 </x-guest-layout>
