@@ -8,7 +8,7 @@
         </div>
         <div>
             <div>
-                <p class="text-xm mb-4 inline-block">{{ $article->user->displayName }}</p>
+                <p class="text-xm mb-4 inline-block">{{ $article->user->display_name }}</p>
             </div>
             <span class="text-xs mb-4 inline-block">{{ $article->created_at->format('Y年m月d日') }}</span>
             <a href="{{ route('articles.show', ['userName' => $article->user->name, 'articleId' => $article->id]) }}"><h2 class="text-md font-bold">{{ $article->title }}</h2></a>
