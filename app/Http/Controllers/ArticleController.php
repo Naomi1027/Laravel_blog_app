@@ -48,11 +48,11 @@ class ArticleController extends Controller
      */
     public function show(string $userName, int $articleId): View
     {
-        $articles = Article::findOrFail($articleId)->where('id', $articleId)->with('user', 'comments', 'tags')->get();
+        $article = Article::with(['user', 'tags', 'comments', 'comments.user'])->findOrFail($articleId);
         $userId = Auth::id();
 
         return view('articles.show', [
-            'articles' => $articles,
+            'article' => $article,
             'userId' => $userId,
         ]);
     }
