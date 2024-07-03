@@ -14,7 +14,7 @@
                 </div>
             </div>
             <div class="flex gap-12 justify-center">
-                <a href="{{ route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article->id ]) }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
+                <a href="{{ route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article_id]) }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
                 <button class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold"type="submit" value="投稿する">更新する</button>
             </div>
         </form>
