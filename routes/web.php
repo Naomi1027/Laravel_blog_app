@@ -25,7 +25,7 @@ Route::delete('/articles/{articleId}', [ArticleController::class, 'destroy'])->n
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/articles/create', [ArticleController::class, 'create'])->name('articles.create');
     Route::get('/{userName}/articles/{articleId}/edit', [ArticleController::class, 'edit'])->where('articleId', '[0-9]+')->name('articles.edit');
-    Route::get('/{articleId}/comments/{commentId}/edit', [CommentController::class, 'edit'])->name('comments.edit');
+    Route::get('/{articleId}/comments/{commentId}/edit', [CommentController::class, 'edit'])->where(['articleId' => '[0-9]+', 'commentId' => '[0-9]+'])->name('comments.edit');
 });
 
 Route::post('/{articleId}/comments/store', [CommentController::class, 'store'])->name('comments.store');
