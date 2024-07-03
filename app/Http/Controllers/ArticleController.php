@@ -52,10 +52,10 @@ class ArticleController extends Controller
         $authUser = Auth::user();
         if ($article->user->name === $userName) {
 
-        return view('articles.show', [
-            'article' => $article,
-            'authUser' => $authUser,
-        ]);
+            return view('articles.show', [
+                'article' => $article,
+                'authUser' => $authUser,
+            ]);
         } else {
             abort(404);
         }
