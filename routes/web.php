@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +25,11 @@ Route::delete('/articles/{articleId}', [ArticleController::class, 'destroy'])->n
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/articles/create', [ArticleController::class, 'create'])->name('articles.create');
     Route::get('/{userName}/articles/{articleId}/edit', [ArticleController::class, 'edit'])->where('articleId', '[0-9]+')->name('articles.edit');
+    Route::get('/{articleId}/comments/{commentId}/edit', [CommentController::class, 'edit'])->name('comments.edit');
 });
+
+Route::post('/{articleId}/comments/store', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/comments/{commentId}/update', [CommentController::class, 'update'])->name('comments.update');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
