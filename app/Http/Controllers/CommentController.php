@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use App\Models\Article;
 use App\Models\Comment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -14,25 +15,35 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCommentRequest $request, int $articleId): RedirectResponse
+    public function store(StoreCommentRequest $request, string $userName, int $articleId): RedirectResponse
     {
-        $id = ['user_id' => Auth::id(), 'article_id' => $articleId];
-        $validated = $request->validated();
-        $comment = Comment::create(array_merge($id, $validated));
+        if ($articleId === Article::find($articleId)->id) {
+            $validated = $request->validated();
+            $comment = Comment::create(array_merge([
+                'user_id' => Auth::id(),
+                'article_id' => $articleId,
+            ], $validated));
 
-        return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article->id]);
+            return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $articleId]);
+        } else {
+
+            return redirect('/');
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $articleId, int $commentId): View
+    public function edit(int $commentId): View
     {
         $comment = Comment::with(['article', 'user'])->findOrFail($commentId);
 
-        return view('comments.edit', [
-            'comment' => $comment,
-        ]);
+        if ($comment->user_id === Auth::id()) {
+
+            return view('comments.edit', ['comment' => $comment]);
+        } else {
+            abort(404);
+        }
     }
 
     /**
@@ -40,10 +51,15 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request, int $commentId): RedirectResponse
     {
-        $validated = $request->validated();
-        Comment::where('id', $commentId)->update($validated);
-        $comment = Comment::with(['user', 'article'])->findOrFail($commentId);
+        if ($commentId === Comment::find($commentId)->id) {
+            $validated = $request->validated();
+            Comment::where('id', $commentId)->update($validated);
+            $comment = Comment::with(['user', 'article'])->findOrFail($commentId);
 
-        return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article->id]);
+            return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article_id]);
+        } else {
+
+            return redirect('/');
+        }
     }
 }
