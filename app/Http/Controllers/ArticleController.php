@@ -50,11 +50,15 @@ class ArticleController extends Controller
     {
         $article = Article::with(['user', 'tags', 'comments.user'])->findOrFail($articleId);
         $authUser = Auth::user();
+        if ($article->user->name === $userName) {
 
         return view('articles.show', [
             'article' => $article,
             'authUser' => $authUser,
         ]);
+        } else {
+            abort(404);
+        }
     }
 
     /**
