@@ -49,13 +49,11 @@ class ArticleController extends Controller
     public function show(string $userName, int $articleId): View
     {
         $article = Article::with(['user', 'tags', 'comments.user'])->findOrFail($articleId);
-        $userId = Auth::id();
-        $user = Auth::user();
+        $authUser = Auth::user();
 
         return view('articles.show', [
             'article' => $article,
-            'userId' => $userId,
-            'user' => $user,
+            'authUser' => $authUser,
         ]);
     }
 
@@ -65,10 +63,14 @@ class ArticleController extends Controller
     public function edit(string $userName, int $articleId): View
     {
         $article = Article::findOrFail($articleId);
+        if ($article->user_id === Auth::id()) {
 
-        return view('articles.edit', [
-            'article' => $article,
-        ]);
+            return view('articles.edit', [
+                'article' => $article,
+            ]);
+        } else {
+            abort(404);
+        }
     }
 
     /**
