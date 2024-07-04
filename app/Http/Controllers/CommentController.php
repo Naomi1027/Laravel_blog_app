@@ -20,14 +20,14 @@ class CommentController extends Controller
         if (Article::query()->where('id', $articleId)->doesntExist()) {
             return redirect('/');
         }
-            $validated = $request->validated();
-            $comment = Comment::create(array_merge([
-                'user_id' => Auth::id(),
-                'article_id' => $articleId,
-            ], $validated));
+        $validated = $request->validated();
+        $comment = Comment::create(array_merge([
+            'user_id' => Auth::id(),
+            'article_id' => $articleId,
+        ], $validated));
 
-            return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $articleId]);
-        }
+        return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $articleId]);
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -55,10 +55,10 @@ class CommentController extends Controller
             return redirect('/');
         }
 
-            $validated = $request->validated();
-            Comment::where('id', $commentId)->update($validated);
-            $comment = Comment::with(['user', 'article'])->findOrFail($commentId);
+        $validated = $request->validated();
+        Comment::where('id', $commentId)->update($validated);
+        $comment = Comment::with(['user', 'article'])->findOrFail($commentId);
 
-            return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article_id]);
-        }
+        return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article_id]);
+    }
 }
