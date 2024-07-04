@@ -9,7 +9,7 @@
             <div class="flex relative">
                 <h2 class="mb-6 text-2xl">{{ $article->user->display_name }}</h2>
                 <div class="absolute top-0 right-0">
-                @if ($userId === $article->user->id)
+                    @if (Auth::id() === $article->user->id)
                     <div class="flex-col space-y-2 ml-auto">
                         <a href="{{ route('articles.edit', ['userName' => $article->user->name, 'articleId' => $article->id]) }}" class=" w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
                         <form method="POST" action="{{ route('articles.destroy', ['articleId' => $article->id]) }}">
@@ -48,10 +48,10 @@
         <div class="flex mb-4">
             <img src="{{ $comment->user->icon_path }}" alt="" class="w-24 h-24 rounded-full">
             <h2 class="mb-6 ml-4 text-2xl">{{ $comment->user->display_name }}</h2>
-            @if ($userId === $comment->user->id)
+            @if (Auth::id() === $comment->user_id)
             <div class="flex-col space-y-2 ml-auto">
                 <p>{{ $comment->updated_at->format('Y年m月d日') }}</p>
-                <a href="" class=" h-10 w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
+                <a href="{{ route('comments.edit', ['commentId' => $comment->id]) }}" class=" h-10 w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
                 <form method="POST" action="">
                     @method('delete')
                     @csrf
@@ -63,6 +63,27 @@
         <p>{{ $comment->comment }}</p>
     </section>
     @endforeach
+    @auth
+    <section class="border-2 border-gray-400 mt-4 p-8">
+        <div class="flex mb-4">
+            <img src="{{ $authUser->icon_path }}" alt="" class="w-24 h-24 rounded-full">
+            <h3 class="text-2xl ml-4 mb-4">コメントする</h3>
+        </div>
+        <form method="POST" action="{{ route('comments.store', ['userName' => $article->user->name, 'articleId' => $article->id]) }}">
+            @csrf
+            <div class="mb-6">
+                <label for="comment"></label>
+                <textarea name="comment" id="comment" rows="5" class="w-full border-solid border-2 p-2 text-xl">{{ old('comment') }}</textarea>
+                @error('comment')
+                    <p class="text-red-700">{{ $message }}</p>
+                @enderror
+                <div class="relative h-10">
+                <button class="absolute inset-y-0 right-0 w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold"type="submit" value="投稿する">投稿する</button>
+                </div>
+            </div>
+        </form>
+    </section>
+    @endauth
 </div>
 
 </x-guest-layout>
