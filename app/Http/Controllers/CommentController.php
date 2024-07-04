@@ -36,11 +36,11 @@ class CommentController extends Controller
     {
         $comment = Comment::with(['article', 'user'])->findOrFail($commentId);
 
-        if ($comment->user_id === Auth::id()) {
+        if ($comment->user_id !== Auth::id()) {
+            abort(404);
+        }
 
             return view('comments.edit', ['comment' => $comment]);
-        }
-        abort(404);
     }
 
     /**

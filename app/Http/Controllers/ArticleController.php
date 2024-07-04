@@ -50,14 +50,13 @@ class ArticleController extends Controller
     {
         $article = Article::with(['user', 'tags', 'comments.user'])->findOrFail($articleId);
         $authUser = Auth::user();
-        if ($article->user->name === $userName) {
-
+        if ($article->user->name !== $userName) {
+            abort(404);
+        }
             return view('articles.show', [
                 'article' => $article,
                 'authUser' => $authUser,
             ]);
-        }
-        abort(404);
     }
 
     /**
@@ -66,14 +65,12 @@ class ArticleController extends Controller
     public function edit(string $userName, int $articleId): View
     {
         $article = Article::findOrFail($articleId);
-        if ($article->user_id === Auth::id()) {
-
+        if ($article->user_id !== Auth::id()) {
+            abort(404);
+        }
             return view('articles.edit', [
                 'article' => $article,
             ]);
-        } else {
-            abort(404);
-        }
     }
 
     /**
