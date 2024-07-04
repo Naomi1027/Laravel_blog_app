@@ -56,9 +56,8 @@ class ArticleController extends Controller
                 'article' => $article,
                 'authUser' => $authUser,
             ]);
-        } else {
-            abort(404);
         }
+        abort(404);
     }
 
     /**
