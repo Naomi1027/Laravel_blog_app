@@ -17,7 +17,7 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request, string $userName, int $articleId): RedirectResponse
     {
-        if ($articleId === Article::find($articleId)->id) {
+        if (Article::query()->where('id', $articleId)->exists()) {
             $validated = $request->validated();
             $comment = Comment::create(array_merge([
                 'user_id' => Auth::id(),
@@ -25,10 +25,9 @@ class CommentController extends Controller
             ], $validated));
 
             return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $articleId]);
-        } else {
-
-            return redirect('/');
         }
+
+        return redirect('/');
     }
 
     /**
@@ -41,9 +40,8 @@ class CommentController extends Controller
         if ($comment->user_id === Auth::id()) {
 
             return view('comments.edit', ['comment' => $comment]);
-        } else {
-            abort(404);
         }
+        abort(404);
     }
 
     /**
@@ -51,15 +49,17 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request, int $commentId): RedirectResponse
     {
-        if ($commentId === Comment::find($commentId)->id) {
+        if (Comment::query()->where([
+            ['id', $commentId],
+            ['user_id', Auth::id()],
+        ])->exists()) {
             $validated = $request->validated();
             Comment::where('id', $commentId)->update($validated);
             $comment = Comment::with(['user', 'article'])->findOrFail($commentId);
 
             return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article_id]);
-        } else {
-
-            return redirect('/');
         }
+
+        return redirect('/');
     }
 }
