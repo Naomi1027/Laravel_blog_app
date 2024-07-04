@@ -17,7 +17,9 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request, string $userName, int $articleId): RedirectResponse
     {
-        if (Article::query()->where('id', $articleId)->exists()) {
+        if (Article::query()->where('id', $articleId)->doesntExist()) {
+            return redirect('/');
+        }
             $validated = $request->validated();
             $comment = Comment::create(array_merge([
                 'user_id' => Auth::id(),
@@ -26,9 +28,6 @@ class CommentController extends Controller
 
             return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $articleId]);
         }
-
-        return redirect('/');
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -52,14 +51,14 @@ class CommentController extends Controller
         if (Comment::query()->where([
             ['id', $commentId],
             ['user_id', Auth::id()],
-        ])->exists()) {
+        ])->doesntExist()) {
+            return redirect('/');
+        }
+
             $validated = $request->validated();
             Comment::where('id', $commentId)->update($validated);
             $comment = Comment::with(['user', 'article'])->findOrFail($commentId);
 
             return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article_id]);
         }
-
-        return redirect('/');
-    }
 }
