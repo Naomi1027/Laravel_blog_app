@@ -40,7 +40,7 @@ class CommentController extends Controller
             abort(404);
         }
 
-            return view('comments.edit', ['comment' => $comment]);
+        return view('comments.edit', ['comment' => $comment]);
     }
 
     /**

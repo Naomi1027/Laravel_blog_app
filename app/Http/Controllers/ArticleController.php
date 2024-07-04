@@ -53,10 +53,11 @@ class ArticleController extends Controller
         if ($article->user->name !== $userName) {
             abort(404);
         }
-            return view('articles.show', [
-                'article' => $article,
-                'authUser' => $authUser,
-            ]);
+
+        return view('articles.show', [
+            'article' => $article,
+            'authUser' => $authUser,
+        ]);
     }
 
     /**
@@ -68,9 +69,10 @@ class ArticleController extends Controller
         if ($article->user_id !== Auth::id()) {
             abort(404);
         }
-            return view('articles.edit', [
-                'article' => $article,
-            ]);
+
+        return view('articles.edit', [
+            'article' => $article,
+        ]);
     }
 
     /**
