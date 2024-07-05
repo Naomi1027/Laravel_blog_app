@@ -20,13 +20,14 @@ class CommentController extends Controller
         if (Article::query()->where('id', $articleId)->doesntExist()) {
             return redirect('/');
         }
+        $article = Article::find($articleId);
         $validated = $request->validated();
         $comment = Comment::create(array_merge([
             'user_id' => Auth::id(),
             'article_id' => $articleId,
         ], $validated));
 
-        return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $articleId]);
+        return redirect()->route('articles.show', ['userName' => $article->user->name, 'articleId' => $articleId]);
     }
 
     /**
@@ -59,6 +60,24 @@ class CommentController extends Controller
         Comment::where('id', $commentId)->update($validated);
         $comment = Comment::with(['user', 'article'])->findOrFail($commentId);
 
-        return redirect()->route('articles.show', ['userName' => $comment->user->name, 'articleId' => $comment->article_id]);
+        return redirect()->route('articles.show', ['userName' => $comment->article->user->name, 'articleId' => $comment->article_id]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(int $commentId): RedirectResponse
+    {
+        if (Comment::query()->where([
+            ['id', $commentId],
+            ['user_id', Auth::id()],
+        ])->doesntExist()) {
+            return redirect('/');
+        }
+
+        $comment = Comment::find($commentId);
+        $comment->delete();
+
+        return redirect()->route('articles.show', ['userName' => $comment->article->user->name, 'articleId' => $comment->article_id]);
     }
 }
