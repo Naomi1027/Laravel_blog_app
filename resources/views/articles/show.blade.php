@@ -52,7 +52,7 @@
             <div class="flex-col space-y-2 ml-auto">
                 <p>{{ $comment->updated_at->format('Y年m月d日') }}</p>
                 <a href="{{ route('comments.edit', ['commentId' => $comment->id]) }}" class=" h-10 w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">編集する</a>
-                <form method="POST" action="">
+                <form method="POST" action="{{ route('comments.destroy', ['commentId' => $comment->id]) }}">
                     @method('delete')
                     @csrf
                     <input type="submit" value="削除する" onclick='return confirm("本当に削除しますか？")' class="cursor-pointer w-24 text-center rounded-md bg-red-700 p-2 inline-block tracking-normal text-white font-bold">
