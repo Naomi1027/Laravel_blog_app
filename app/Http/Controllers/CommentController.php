@@ -22,7 +22,7 @@ class CommentController extends Controller
         }
         $article = Article::find($articleId);
         $validated = $request->validated();
-        $comment = Comment::create(array_merge([
+        Comment::create(array_merge([
             'user_id' => Auth::id(),
             'article_id' => $articleId,
         ], $validated));
