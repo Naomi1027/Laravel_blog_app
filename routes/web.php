@@ -26,8 +26,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/articles/{articleId}', [ArticleController::class, 'update'])->name('articles.update');
     Route::delete('/articles/{articleId}', [ArticleController::class, 'destroy'])->name('articles.destroy');
     Route::post('/{userName}/articles/{articleId}/comments', [CommentController::class, 'store'])->name('comments.store');
-    Route::post('/comments/{commentId}', [CommentController::class, 'update'])->name('comments.update');
     Route::get('/comments/{commentId}/edit', [CommentController::class, 'edit'])->where('commentId', '[0-9]+')->name('comments.edit');
+    Route::post('/comments/{commentId}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{commentId}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
 Route::get('/dashboard', function () {
