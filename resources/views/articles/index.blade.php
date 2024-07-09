@@ -1,6 +1,9 @@
 <x-guest-layout>
 
 <div class="flex flex-col gap-2">
+    @if ($articles->isEmpty())
+        <p class="text-center my-20 text-xl">検索条件に一致する記事が見つかりません。</p>
+    @endif
     @foreach ( $articles as $article )
     <article class="w-full rounded-lg border-gray-400 bg-stone-100 p-4 border-2 flex">
         <div class="mr-8">
