@@ -17,13 +17,11 @@ class ArticleController extends Controller
      */
     public function index(Request $request): View
     {
-        $articles = Article::with('user', 'tags')->get();
-        // キーワードから検索処理
         $keyword = $request->input('keyword');
-        if (! empty($keyword)) {
-            $articles = Article::with('user', 'tags')->where('title', 'like', "%{$keyword}%")
-                ->orWhere('content', 'like', "%{$keyword}%")->get();
-        }
+        $articles = Article::with('user', 'tags')->when($keyword, function ($query, $keyword) {
+            $query->where('title', 'like', "%{$keyword}%")
+                ->orWhere('content', 'like', "%{$keyword}%");
+        })->get();
 
         return view('articles.index', [
             'articles' => $articles,
