@@ -16,6 +16,13 @@
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+            <div class="pt-8">
+                <form action="{{ route('articles.index') }}" method="GET">
+                    @csrf
+                    <input type="search" name="keyword" maxlength="30" placeholder="キーワードを入力">
+                    <input type="submit" class="w-16 h-10 text-center rounded-md  bg-gray-400" value="検索">
+                </form>
+            </div>
             @if (Route::has('login'))
             <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
                 @auth
