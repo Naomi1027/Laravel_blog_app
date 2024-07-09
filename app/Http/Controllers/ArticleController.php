@@ -6,6 +6,7 @@ use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -14,9 +15,15 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $articles = Article::with('user', 'tags')->get();
+        // キーワードから検索処理
+        $keyword = $request->input('keyword');
+        if (! empty($keyword)) {
+            $articles = Article::with('user', 'tags')->where('title', 'like', "%{$keyword}%")
+                ->orWhere('content', 'like', "%{$keyword}%")->get();
+        }
 
         return view('articles.index', [
             'articles' => $articles,
