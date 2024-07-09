@@ -1,6 +1,12 @@
 <x-guest-layout>
 
 <div class="flex flex-col gap-2">
+    <div class="pb-2 flex justify-center">
+        <form action="{{ route('articles.index') }}" method="GET">
+            <input type="search" name="keyword" maxlength="30" placeholder="キーワードを入力">
+            <input type="submit" class="w-16 h-10 text-center rounded-md  bg-gray-400" value="検索">
+        </form>
+    </div>
     @if ($articles->isEmpty())
         <p class="text-center my-20 text-xl">検索条件に一致する記事が見つかりません。</p>
     @endif

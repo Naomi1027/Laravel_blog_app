@@ -1,5 +1,10 @@
 <x-guest-layout>
-
+    <div class="flex justify-center">
+        <form action="{{ route('articles.index') }}" method="GET">
+            <input type="search" name="keyword" maxlength="30" placeholder="キーワードを入力">
+            <input type="submit" class="w-16 h-10 text-center rounded-md  bg-gray-400" value="検索">
+        </form>
+    </div>
 <div class="mt-20 mx-auto w-full">
     <article class="flex">
         <div class="w-40">
