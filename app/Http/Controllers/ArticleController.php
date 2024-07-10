@@ -21,7 +21,7 @@ class ArticleController extends Controller
         $articles = Article::with('user', 'tags')->when($keyword, function ($query, $keyword) {
             $query->where('title', 'like', "%{$keyword}%")
                 ->orWhere('content', 'like', "%{$keyword}%");
-        })->get();
+        })->latest()->paginate(10);
 
         return view('articles.index', [
             'articles' => $articles,

@@ -30,6 +30,7 @@
     </article>
     @endforeach
 </div>
+{{ $articles->links() }}
 
 <div class="text-center mt-4">
     <a href="{{ route('articles.create')}}" class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold">投稿する</a>
