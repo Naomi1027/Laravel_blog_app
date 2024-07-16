@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -11,8 +10,6 @@ use Illuminate\Notifications\Slack\SlackMessage;
 
 class SlackNotification extends Notification
 {
-    use Queueable;
-
     /**
      * Create a new notification instance.
      */
@@ -38,6 +35,7 @@ class SlackNotification extends Notification
     public function toSlack(): SlackMessage
     {
         if ($this->articles->isEmpty()) {
+
             return (new SlackMessage())
                 ->headerBlock('本日のブログ作成はありませんでした');
         }
