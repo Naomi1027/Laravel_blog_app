@@ -18,8 +18,7 @@ class SlackNotification extends Notification
      */
     public function __construct(
         protected Collection $articles
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.

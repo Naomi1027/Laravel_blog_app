@@ -47,4 +47,4 @@ larastan:
 	docker compose exec app php -d memory_limit=1G ./vendor/bin/phpstan analyse -c phpstan.neon
 
 pint:
-	docker compose exec app ./vendor/bin/pint
+	docker compose exec app ./vendor/bin/pint -v
