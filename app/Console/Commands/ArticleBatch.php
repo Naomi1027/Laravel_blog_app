@@ -33,7 +33,7 @@ class ArticleBatch extends Command
         $articles = Article::whereDate('created_at', Carbon::today())->get();
 
         // Slackに通知
-        Notification::route('slack', env('SLACK_WEBHOOK_URL'))
+        Notification::route('slack', config('services.slack.notifications.channel'))
             ->notify(new SlackNotification($articles));
         $this->info('バッチ処理が完了いたしました。');
     }
