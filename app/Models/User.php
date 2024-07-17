@@ -69,6 +69,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function routeNotificationForSlack(Notification $notification): ?string
     {
-        return '#training_slack_notification';
+        return config('services.slack.notifications.channel');
     }
 }
