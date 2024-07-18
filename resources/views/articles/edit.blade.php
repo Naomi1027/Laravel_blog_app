@@ -12,6 +12,16 @@
                 @enderror
             </div>
             <div class="mb-6">
+                <p class="pr-8">タグの選択</p>
+                    @foreach ($tags as $tagId => $tagName)
+                        <input type="checkbox" id="{{ $tagName}}" name="tags[]" value="{{ $tagId }}" {{ $article->tags->contains('id', $tagId) ? 'checked' : ''}}>
+                        <label for="{{ $tagName }}" class="text-xl pr-2">{{ $tagName }}</label>
+                    @endforeach
+                    @error('tags')
+                            <p class="text-red-700">{{ $message }}</p>
+                    @enderror
+            </div>
+            <div class="mb-6">
                 <label for="content">本文</label>
                 <textarea name="content" id="content" rows="15" class="w-full border-solid border-2 p-2 text-xl">{{ old('content', $article->content) }}</textarea>
                 @error('content')
