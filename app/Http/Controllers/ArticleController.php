@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
+use App\Models\Tag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,11 @@ class ArticleController extends Controller
      */
     public function create(): View
     {
-        return view('articles.create');
+        $tags = Tag::pluck('name', 'id')->toArray();
+
+        return view('articles.create', [
+            'tags' => $tags,
+        ]);
     }
 
     /**
@@ -42,8 +47,9 @@ class ArticleController extends Controller
     public function store(StoreArticleRequest $request): RedirectResponse
     {
         $id = ['user_id' => Auth::id()];
-        $validated = $request->validated();
-        Article::create(array_merge($id, $validated));
+        $validated = $request->safe()->except(['tags']);
+        $article = Article::create(array_merge($id, $validated));
+        $article->tags()->attach($request->tags);
 
         return redirect('/');
     }
@@ -71,12 +77,14 @@ class ArticleController extends Controller
     public function edit(string $userName, int $articleId): View
     {
         $article = Article::findOrFail($articleId);
+        $tags = Tag::pluck('name', 'id')->toArray();
         if ($article->user_id !== Auth::id()) {
             abort(404);
         }
 
         return view('articles.edit', [
             'article' => $article,
+            'tags' => $tags,
         ]);
     }
 
@@ -85,9 +93,10 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
-        $validated = $request->validated();
+        $validated = $request->safe()->except(['tags']);
         Article::where('id', $articleId)->update($validated);
         $article = Article::findOrFail($articleId);
+        $article->tags()->sync($request->tags);
 
         return redirect()->route('articles.show', ['userName' => $article->user->name, 'articleId' => $articleId]);
     }
@@ -99,6 +108,7 @@ class ArticleController extends Controller
     {
         $article = Article::find($articleId);
         $article->delete();
+        $article->tags()->detach();
 
         return redirect()->route('articles.index');
     }
