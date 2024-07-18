@@ -24,6 +24,8 @@ class StoreArticleRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'tags' => 'nullable|array|max:3',
+            'tags.*' => 'numeric|exists:tags,id',
         ];
     }
 
@@ -38,6 +40,7 @@ class StoreArticleRequest extends FormRequest
             'title.max' => 'タイトルは:max文字以内でお願いします。',
             'content.required' => '本文は必須です。',
             'content.string' => '本文は文字列にして下さい。',
+            'tags.max' => 'タグは:maxつまで選択して下さい',
         ];
     }
 }
