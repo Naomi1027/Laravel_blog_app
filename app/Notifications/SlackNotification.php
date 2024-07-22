@@ -48,6 +48,13 @@ class SlackNotification extends Notification
             ->dividerBlock()
             ->sectionBlock(function (SectionBlock $block) {
                 $block->text('作成された記事のタイトル');
+            })
+            ->sectionBlock(function (SectionBlock $block) {
+                $messages = '';
+                foreach($this->articles as $article) {
+                    $messages = $messages . "\n". $article->user()->value('display_name').':'. $article->title;
+                }
+                $block->text($messages);
             });
     }
 
