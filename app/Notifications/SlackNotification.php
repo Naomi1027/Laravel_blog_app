@@ -2,13 +2,13 @@
 
 namespace App\Notifications;
 
+use App\Models\Article;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
 use Illuminate\Notifications\Slack\SlackMessage;
-use App\Models\Article;
 
 class SlackNotification extends Notification
 {
@@ -45,6 +45,7 @@ class SlackNotification extends Notification
             return (new SlackMessage())
                 ->headerBlock('本日のブログ作成はありませんでした');
         }
+
         return (new SlackMessage())
             ->headerBlock('本日のブログ作成数：'. $this->articles->count().'件')
             ->dividerBlock()
