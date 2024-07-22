@@ -8,6 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
 use Illuminate\Notifications\Slack\SlackMessage;
+use App\Models\Article;
 
 class SlackNotification extends Notification
 {
@@ -15,6 +16,8 @@ class SlackNotification extends Notification
 
     /**
      * Create a new notification instance.
+     *
+     * @param Collection<Article> $articles
      */
     public function __construct(
         protected Collection $articles
@@ -42,7 +45,6 @@ class SlackNotification extends Notification
             return (new SlackMessage())
                 ->headerBlock('本日のブログ作成はありませんでした');
         }
-
         return (new SlackMessage())
             ->headerBlock('本日のブログ作成数：'. $this->articles->count().'件')
             ->dividerBlock()
@@ -51,7 +53,7 @@ class SlackNotification extends Notification
             })
             ->sectionBlock(function (SectionBlock $block) {
                 $messages = '';
-                foreach($this->articles as $article) {
+                foreach ($this->articles as $article) {
                     $messages = $messages . "\n". $article->user()->value('display_name').':'. $article->title;
                 }
                 $block->text($messages);
