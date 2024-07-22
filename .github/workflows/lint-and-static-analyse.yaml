@@ -18,11 +18,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-      - name: Install Pint
-        run: composer require laravel/pint
+      - name: Install Libraries
+        run: composer install
       - name: Run Pint
         run: ./vendor/bin/pint --test
-      - name: Install Larastan
-        run: composer require larastan/larastan:^2.0
       - name: Run Larastan
         run: ./vendor/bin/phpstan analyse -c phpstan.neon --error-format=raw --no-progress
