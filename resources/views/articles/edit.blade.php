@@ -14,7 +14,7 @@
             <div class="mb-6">
                 <p class="pr-8">タグの選択</p>
                     @foreach ($tags as $tagId => $tagName)
-                        <input type="checkbox" id="{{ $tagName}}" name="tags[]" value="{{ $tagId }}" {{ $article->tags->contains('id', $tagId) ? 'checked' : ''}}>
+                        <input type="checkbox" id="{{ $tagName}}" name="tags[]" value="{{ $tagId }}" @checked(in_array($tagId, old('tags', $article->tags->pluck('id')->toArray())))>
                         <label for="{{ $tagName }}" class="text-xl pr-2">{{ $tagName }}</label>
                     @endforeach
                     @error('tags')

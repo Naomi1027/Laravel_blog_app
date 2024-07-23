@@ -14,7 +14,7 @@
             <div class="mb-6">
                 <p class="pr-8">タグの選択</p>
                     @foreach ($tags as $tagId => $tagName)
-                        <input type="checkbox" id="{{ $tagName}}" name="tags[]" value="{{ $tagId }}" @if(is_array(old('tags')) && in_array($tagId, old('tags'))) checked @endif>
+                        <input type="checkbox" id="{{ $tagName }}" name="tags[]" value="{{ $tagId }}" @checked(is_array(old('tags')) && in_array($tagId, old('tags')))>
                         <label for="{{ $tagName }}" class="text-xl pr-2">{{ $tagName }}</label>
                     @endforeach
                     @error('tags')
