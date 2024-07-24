@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Article;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -15,6 +16,8 @@ class SlackNotification extends Notification
 
     /**
      * Create a new notification instance.
+     *
+     * @param Collection<Article> $articles
      */
     public function __construct(
         protected Collection $articles
@@ -50,7 +53,11 @@ class SlackNotification extends Notification
                 $block->text('作成された記事のタイトル');
             })
             ->sectionBlock(function (SectionBlock $block) {
-                $block->text(collect($this->articles)->implode('title', "\n"));
+                $messages = '';
+                foreach ($this->articles as $article) {
+                    $messages = $messages . "\n". $article->user()->value('display_name').':'. $article->title;
+                }
+                $block->text($messages);
             });
     }
 
