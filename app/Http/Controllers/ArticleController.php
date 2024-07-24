@@ -50,7 +50,7 @@ class ArticleController extends Controller
         $validated = $request->safe()->except(['tags']);
         $article = Article::create(array_merge($id, $validated));
 
-        if ($request->has('tags')) {
+        if ($request->safe()->has('tags')) {
             $article->tags()->attach($request->safe()['tags']);
         }
 
@@ -100,7 +100,7 @@ class ArticleController extends Controller
         Article::where('id', $articleId)->update($validated);
         $article = Article::findOrFail($articleId);
 
-        if ($request->has('tags')) {
+        if ($request->safe()->has('tags')) {
             $article->tags()->sync($request->safe()['tags']);
         } else {
             $article->tags()->detach();
