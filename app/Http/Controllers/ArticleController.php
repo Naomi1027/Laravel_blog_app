@@ -50,8 +50,8 @@ class ArticleController extends Controller
         $validated = $request->safe()->except(['tags']);
         $article = Article::create(array_merge($id, $validated));
 
-        if (property_exists($request->safe(), 'tags')) {
-            $article->tags()->attach($request->safe()->tags);
+        if ($request->has('tags')) {
+            $article->tags()->attach($request->safe()['tags']);
         }
 
         return redirect('/');
@@ -96,13 +96,12 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
-        assert(property_exists($request->safe(), 'tags'));
         $validated = $request->safe()->except(['tags']);
         Article::where('id', $articleId)->update($validated);
         $article = Article::findOrFail($articleId);
 
         if ($request->has('tags')) {
-            $article->tags()->sync($request->safe()->tags);
+            $article->tags()->sync($request->safe()['tags']);
         } else {
             $article->tags()->detach();
         }
