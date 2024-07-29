@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/comments/{commentId}/edit', [CommentController::class, 'edit'])->where('commentId', '[0-9]+')->name('comments.edit');
     Route::post('/comments/{commentId}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{commentId}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/articles/{articleId}/like', [ArticleController::class, 'like'])->name('articles.like');
 });
 
 Route::get('/dashboard', function () {
