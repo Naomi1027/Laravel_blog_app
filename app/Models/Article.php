@@ -43,4 +43,12 @@ class Article extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function userLikes(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'likes', 'article_id', 'user_id')->withTimestamps();
+    }
 }
