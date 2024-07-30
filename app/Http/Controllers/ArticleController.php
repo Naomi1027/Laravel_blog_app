@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\Authenticate;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
@@ -130,16 +131,39 @@ class ArticleController extends Controller
      */
     public function like(int $articleId): RedirectResponse
     {
-        $authUser = User::find(Auth::id());
-        $article = Article::find($articleId);
+        /**
+         * @var User $authUser
+         */
+        $authUser = Auth::user();
+        $article = Article::findOrFail($articleId);
+
+        // ログインユーザーがいいねした記事をすべて取得し、article_idカラムといいねしたい記事のidが存在するかを判定
+        if ($authUser->articleLikes()->where('article_id', $articleId)->doesntExist()) {
+            // 記事にいいねしたのがlikesテーブルにレコードが追加される
+            $authUser->articleLikes()->attach($articleId);
+        }
+
+        return redirect()->route('articles.show', ['userName' => $article->user->name, 'articleId' => $articleId]);
+    }
+
+    /**
+     * 引数のarticleIdに紐づくarticleにUNLIKEする
+     *
+     * @param int $articleId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function unlike(int $articleId): RedirectResponse
+    {
+        /**
+         * @var User $authUser
+         */
+        $authUser = Auth::user();
+        $article = Article::findOrFail($articleId);
 
         // ログインユーザーがいいねした記事をすべて取得し、article_idカラムといいねしたい記事のidが存在するかを判定
         if ($authUser->articleLikes()->where('article_id', $articleId)->exists()) {
             // 記事にいいねしていたのが解除される
             $authUser->articleLikes()->detach($articleId);
-        } else {
-            // 記事にいいねしたのがlikesテーブルにレコードが追加される
-            $authUser->articleLikes()->attach($articleId);
         }
 
         return redirect()->route('articles.show', ['userName' => $article->user->name, 'articleId' => $articleId]);
