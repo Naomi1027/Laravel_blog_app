@@ -7,8 +7,23 @@
     </div>
 <div class="mt-20 mx-auto w-full">
     <article class="flex">
-        <div class="w-40">
-            <img src="{{ $article->user->icon_path }}" alt="" class="w-24 h-24 rounded-full">
+        <div>
+            <div class="w-40">
+                <img src="{{ $article->user->icon_path }}" alt="" class="w-24 h-24 rounded-full">
+            </div>
+            <div class="flex mt-4 ml-6">
+                @if ($article->userLikes->contains($authUser))
+                <form method="POST" action="{{ route('articles.unlike', ['articleId' => $article->id]) }}">
+                    @method('delete')
+                @else
+                <form method="POST" action="{{ route('articles.like', ['articleId' => $article->id]) }}">
+                @endif
+                    @csrf
+                    <button type="submit">
+                        <svg class="{{ $article->userLikes->contains($authUser) ? "h-12 w-12 text-orange-500" : "h-12 w-12 text-gray-500" }}" viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg></button>
+                </form>
+                <p class="pl-2 pt-4">{{ $article->userLikes->count() }}</p>
+            </div>
         </div>
         <div class="w-full">
             <div class="flex relative">
