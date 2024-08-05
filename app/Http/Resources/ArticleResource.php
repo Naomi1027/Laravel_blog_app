@@ -17,7 +17,7 @@ class ArticleResource extends JsonResource
         /** @var \App\Models\Article $this */
         return [
             'title' => $this->title,
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at->toDateTimeString(),
             'display_name' => $this->user->display_name,
             'icon_path' => $this->user->icon_path,
             'tags' => TagResource::collection($this->tags),
