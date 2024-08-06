@@ -16,9 +16,6 @@ class ArticleController extends Controller
      */
     public function index(): JsonResource
     {
-        /**
-         * @var Article $articleLists
-         */
         $articleLists = Article::with('user', 'tags', 'userLikes')->latest()->orderBy('id', 'ASC')->paginate(10);
 
         return ArticleResource::collection($articleLists);
