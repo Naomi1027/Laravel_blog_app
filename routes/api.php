@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\VerifyEmailController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
