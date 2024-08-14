@@ -23,6 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
-Route::post('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verifyEmail'])->name('verification.verify');
+Route::post('/email/verify', [VerifyEmailController::class, 'verifyEmail'])->name('verification.verify');
 
 Route::get('/articles', [ArticleController::class, 'index']);
