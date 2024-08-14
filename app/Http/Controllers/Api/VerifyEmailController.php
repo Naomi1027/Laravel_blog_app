@@ -15,9 +15,9 @@ class VerifyEmailController extends Controller
      * @param EmailVerificationRequest $request
      * @return Response
      */
-    public function verifyEmail(EmailVerificationRequest $request)
+    public function verifyEmail(EmailVerificationRequest $request): Response
     {
-        $user = User::findOrFail($request->id);
+        $user = User::where('email_verified_at', null)->findOrFail($request->id);
 
         //markEmailAsVerified()でUserテーブルの"email_verified_at"に日付を保存
         $user->markEmailAsVerified();
