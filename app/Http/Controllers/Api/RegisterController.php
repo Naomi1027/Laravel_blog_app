@@ -16,7 +16,7 @@ class RegisterController extends Controller
      * @param RegisterRequest $request
      * @return Response
      */
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): Response
     {
         $validated = $request->validated();
         $validated['password'] = bcrypt($request->password);
@@ -25,8 +25,8 @@ class RegisterController extends Controller
 
         return response()->json([
             'message' => 'Registered!',
-            'name' => $request->name,
-            'email' => $request->email,
+            'name' => $user->name,
+            'email' => $user->email,
         ], Response::HTTP_OK);
     }
 }
