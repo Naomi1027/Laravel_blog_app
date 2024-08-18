@@ -20,7 +20,16 @@ class RegisterController extends Controller
     {
         $validated = $request->validated();
         $validated['password'] = bcrypt($request->password);
+
+        // usersテーブルにemailが一致し、email_verified_atがnullのレコードを削除
+        User::where([
+            ['email', $validated['email']],
+            ['email_verified_at', null],
+        ])->forceDelete();
+
+        // usersテーブルに新しいユーザーを登録
         $user = User::create($validated);
+
         event(new Registered($user));
 
         return response()->json([
