@@ -17,15 +17,21 @@ class VerifyEmailController extends Controller
      */
     public function verifyEmail(EmailVerificationRequest $request): Response
     {
-        $user = User::where('email_verified_at', null)->findOrFail($request->id);
+        $validated = $request->validated();
+
+        $user = User::where('email_verified_at', null)->find($validated['id']);
+
+        if (sha1($user->email) !== $validated['hash']) {
+            return response()->json([
+                'message' => 'Invalid hash!',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         //markEmailAsVerified()でUserテーブルの"email_verified_at"に日付を保存
         $user->markEmailAsVerified();
 
         return response()->json([
             'message' => 'Successfully Verified!',
-            'id' => $request->id,
-            'hash' => $request->hash,
         ], Response::HTTP_OK);
     }
 }
