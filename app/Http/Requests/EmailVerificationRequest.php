@@ -2,11 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
-use Closure;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class EmailVerificationRequest extends FormRequest
 {
@@ -25,33 +21,16 @@ class EmailVerificationRequest extends FormRequest
      */
     public function rules(): array
     {
-        $user = User::where('email_verified_at', null)->findOrFail($this->id);
-
         return [
             'id' => [
                 'required',
                 'integer',
+                'exists:users,id',
             ],
             'hash' => [
                 'required',
                 'string',
-                function (string $attribute, mixed $value, Closure $fail) use ($user) {
-                    if ($value !== sha1($user->email)) {
-                        $fail("The {$attribute} is invalid.");
-                    }
-                },
             ],
         ];
-    }
-
-    protected function failedValidation(Validator $validator): HttpResponseException
-    {
-        $response = [
-            'status' => 404,
-            'message' => 'Validation failed!',
-            'errors' => $validator->errors(),
-        ];
-
-        throw new HttpResponseException(response()->json($response, 422));
     }
 }
