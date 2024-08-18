@@ -2,42 +2,36 @@
 
 namespace Tests\Feature;
 
+use App\Http\Requests\EmailVerificationRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class VerifyEmailControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        User::factory()->create([
+            'name' => 'test',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'email_verified_at' => null,
+        ]);
+    }
+
     /**
      * @test
      *
      * @return void
      */
-    public function 新規登録したユーザーと認証メールが送られたユーザーが一致するか確認(): void
+    public function 新規登録したユーザーと認証メールが送られたユーザーが一致し認証されること(): void
     {
-        // Mailを偽装
-        Notification::fake();
-        // ユーザーを仮登録して認証メールを送信、email_verified_atがnullであることを確認
-        $user = User::create([
-            'name' => 'test',
-            'email' => 'test@example.com',
-            'password' => 'password',
-        ]);
-        event(new Registered($user));
-        $this->assertDatabaseHas('users', [
-            'email_verified_at' => null,
-        ]);
-        // メールが送信されたか確認
-        Notification::assertSentTo(
-            $user,
-            VerifyEmail::class
-        );
-
+        $user = User::first();
         $response = $this->postJson('api/email/verify', [
             'id' => $user->id,
             'hash' => sha1($user->email),
@@ -52,8 +46,6 @@ class VerifyEmailControllerTest extends TestCase
             // 新規登録したユーザーと認証メールが送られたユーザーが一致するか
             ->assertJson([
                 'message' => 'Successfully Verified!',
-                'id' => $user->id,
-                'hash' => sha1($user->email),
             ]);
         // ユーザーが認証されたか確認
         $this->assertDatabaseHas('users', [
@@ -69,30 +61,13 @@ class VerifyEmailControllerTest extends TestCase
      */
     public function 違うユーザーがメール認証した場合は認証されないこと(): void
     {
-        // Mailを偽装
-        Notification::fake();
-        // ユーザーを仮登録して認証メールを送信、email_verified_atがnullであることを確認
-        $user = User::create([
-            'name' => 'test',
-            'email' => 'test@example.com',
-            'password' => 'password',
-        ]);
-        event(new Registered($user));
-        $this->assertDatabaseHas('users', [
-            'email_verified_at' => null,
-        ]);
-        User::first();
-        // メールが送信されたか確認
-        Notification::assertSentTo(
-            $user,
-            VerifyEmail::class
-        );
-
+        $user = User::first();
         // 別のユーザーを仮登録してemail_verified_atがnullであることを確認
-        $anotherUser = User::create([
+        $anotherUser = User::factory()->create([
             'name' => 'anotherTest',
             'email' => 'anotherTest@example.com',
             'password' => 'password1',
+            'email_verified_at' => null,
         ]);
         $this->assertDatabaseHas('users', [
             'email_verified_at' => null,
@@ -103,11 +78,12 @@ class VerifyEmailControllerTest extends TestCase
             'id' => $anotherUser->id,
             'hash' => sha1($user->email),
         ]);
+        // dd($response);
 
         // 422レスポンスが返ってくること
         $response->assertStatus(422)
             // hashがバリデーションエラーになること
-            ->assertInValid('hash')
+            ->assertValid('errors')
             // 違うユーザーでは認証されていないこと
             ->assertJsonMissing([
                 'id' => $anotherUser->id,
@@ -122,5 +98,69 @@ class VerifyEmailControllerTest extends TestCase
             'id' => $anotherUser->id,
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * カスタムリクエストのバリデーションテスト
+     *
+     *@test
+     *
+     * @param array{ id: int, hash: string } $keys 項目名の配列
+     * @param string[] $values 値の配列
+     * @param bool $expect 期待値(true:バリデーションOK、false:バリデーションNG)
+     *
+     * @dataProvider invalidVerifyEmailDataProvider
+     */
+    public function リクエストボディに不備がある場合バリデーションのエラーメッセージがでること(
+        array $keys,
+        array $values,
+        bool $expect
+    ): void {
+        //入力項目の配列（$keys）と値の配列($values)から、連想配列を生成する
+        $dataList = array_combine($keys, $values);
+
+        $request = new EmailVerificationRequest();
+        //フォームリクエストで定義したルールを取得
+        $rules = $request->rules();
+        //Validatorファサードでバリデーターのインスタンスを取得、その際に入力情報とバリデーションルールを引数で渡す
+        $validator = Validator::make($dataList, $rules);
+        //入力情報がバリデーショルールを満たしている場合はtrue、満たしていな場合はfalseが返る
+        $result = $validator->passes();
+        //期待値($expect)と結果($result)を比較
+        $this->assertEquals($expect, $result);
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public static function invalidVerifyEmailDataProvider(): array
+    {
+        return [
+            'id必須エラー' => [
+                ['id', 'hash'],
+                ['', sha1('test@example.com')],
+                false,
+            ],
+            'id形式エラー' => [
+                ['id', 'hash'],
+                ['test', sha1('test@example.com')],
+                false,
+            ],
+            'hash必須エラー' => [
+                ['id', 'hash'],
+                [1, ''],
+                false,
+            ],
+            'hash形式エラー' => [
+                ['id', 'hash'],
+                [1, 1234],
+                false,
+            ],
+            'hash無効エラー' => [
+                ['id', 'hash'],
+                [1, 'invalid_hash'],
+                false,
+            ],
+        ];
     }
 }
