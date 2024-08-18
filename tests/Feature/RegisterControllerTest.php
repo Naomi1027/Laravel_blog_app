@@ -19,7 +19,7 @@ class RegisterControllerTest extends TestCase
      */
     public function 新規登録ができていること(): void
     {
-        // Mailを偽装
+        // Notificationをfakeする
         Notification::fake();
         Notification::assertNothingSent();
 
@@ -62,7 +62,7 @@ class RegisterControllerTest extends TestCase
         array $data,
         array $expectedErrors
     ): void {
-        // Mailを偽装
+        // Notificationをfakeする
         Notification::fake();
         Notification::assertNothingSent();
 
@@ -165,11 +165,11 @@ class RegisterControllerTest extends TestCase
      */
     public function 登録済のユーザーは仮登録できないこと(): void
     {
-        // Mailを偽装
+        // Notificationをfakeする
         Notification::fake();
         Notification::assertNothingSent();
 
-        User::create([
+        User::factory()->create([
             'name' => 'test',
             'email' => 'test@example.com',
             'password' => 'password',
@@ -190,6 +190,51 @@ class RegisterControllerTest extends TestCase
         $this->assertDatabaseCount('users', 1);
         // メールが送信されないこと
         Notification::assertNotSentTo(
+            User::first(),
+            VerifyEmail::class
+        );
+    }
+
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function 本登録されていないユーザーは同じメールアドレスで再登録ができること(): void
+    {
+        // Notificationをfakeする
+        Notification::fake();
+        Notification::assertNothingSent();
+
+        // 仮登録されたユーザーを作成
+        User::factory()->create([
+            'name' => 'test1',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'email_verified_at' => null,
+        ]);
+        // 同じメールアドレスで再登録
+        $this->postJson('/api/register', [
+            'name' => 'test2',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'email_verified_at' => null,
+            // 200レスポンスが返ってきているか
+        ])->assertStatus(200)
+        // バリデーションエラーがないことを確認
+            ->assertValid([
+                'name',
+                'email',
+                'password',
+            ]);
+        // DBにユーザーが保存されていることを確認
+        $this->assertDatabaseHas('users', [
+            'name' => 'test2',
+            'email' => 'test@example.com',
+            'email_verified_at' => null,
+        ]);
+        // メールが送信されたか確認
+        Notification::assertSentTo(
             User::first(),
             VerifyEmail::class
         );
