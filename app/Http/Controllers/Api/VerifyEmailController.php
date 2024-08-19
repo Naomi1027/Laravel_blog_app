@@ -19,12 +19,14 @@ class VerifyEmailController extends Controller
     {
         $validated = $request->validated();
 
-        $user = User::where('email_verified_at', null)->find($validated['id']);
+        // メール認証していないユーザーを取得
+        $user = User::where('email_verified_at', null)->findOrFail($validated['id']);
 
+        // hash値を確認して一致しない場合はエラーを返す
         if (sha1($user->email) !== $validated['hash']) {
             return response()->json([
                 'message' => 'Invalid hash!',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         //markEmailAsVerified()でUserテーブルの"email_verified_at"に日付を保存
