@@ -2,10 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Http\Requests\EmailVerificationRequest;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class VerifyEmailControllerTest extends TestCase
@@ -81,7 +79,7 @@ class VerifyEmailControllerTest extends TestCase
         // dd($response);
 
         // 422レスポンスが返ってくること
-        $response->assertStatus(422)
+        $response->assertStatus(400)
             // hashがバリデーションエラーになること
             ->assertValid('errors')
             // 違うユーザーでは認証されていないこと
@@ -107,27 +105,22 @@ class VerifyEmailControllerTest extends TestCase
      *
      * @param array{ id: int, hash: string } $keys 項目名の配列
      * @param string[] $values 値の配列
-     * @param bool $expect 期待値(true:バリデーションOK、false:バリデーションNG)
+     * @param string[] $expectedErrors
      *
      * @dataProvider invalidVerifyEmailDataProvider
      */
     public function リクエストボディに不備がある場合バリデーションのエラーメッセージがでること(
         array $keys,
         array $values,
-        bool $expect
+        array $expectedErrors
     ): void {
         //入力項目の配列（$keys）と値の配列($values)から、連想配列を生成する
         $dataList = array_combine($keys, $values);
 
-        $request = new EmailVerificationRequest();
-        //フォームリクエストで定義したルールを取得
-        $rules = $request->rules();
-        //Validatorファサードでバリデーターのインスタンスを取得、その際に入力情報とバリデーションルールを引数で渡す
-        $validator = Validator::make($dataList, $rules);
-        //入力情報がバリデーショルールを満たしている場合はtrue、満たしていな場合はfalseが返る
-        $result = $validator->passes();
-        //期待値($expect)と結果($result)を比較
-        $this->assertEquals($expect, $result);
+        $response = $this->postJson('api/email/verify', $dataList);
+        $response->assertStatus(422)
+        // バリデーションエラーがあることを確認
+            ->assertJsonValidationErrors($expectedErrors);
     }
 
     /**
@@ -139,27 +132,37 @@ class VerifyEmailControllerTest extends TestCase
             'id必須エラー' => [
                 ['id', 'hash'],
                 ['', sha1('test@example.com')],
-                false,
+                [
+                    'id' => 'idは必ず指定してください。',
+                ],
             ],
             'id形式エラー' => [
                 ['id', 'hash'],
                 ['test', sha1('test@example.com')],
-                false,
+                [
+                    'id' => 'idは整数で指定してください。',
+                ],
             ],
             'hash必須エラー' => [
                 ['id', 'hash'],
                 [1, ''],
-                false,
+                [
+                    'hash' => 'hashは必ず指定してください。',
+                ],
             ],
             'hash形式エラー' => [
                 ['id', 'hash'],
                 [1, 1234],
-                false,
+                [
+                    'hash' => 'hashは文字列を指定してください。',
+                ],
             ],
             'hash無効エラー' => [
                 ['id', 'hash'],
                 [1, 'invalid_hash'],
-                false,
+                [
+                    'id' => '選択されたidは正しくありません。',
+                ],
             ],
         ];
     }
