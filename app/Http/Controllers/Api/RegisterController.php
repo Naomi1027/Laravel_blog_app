@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\API\RegisterRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Symfony\Component\HttpFoundation\Response;
