@@ -148,7 +148,7 @@ class LoginControllerTest extends TestCase
     public function 存在しないユーザーでログインしようとするとエラーが発生すること(): void
     {
         $response = $this->postJson('/api/login', [
-            'email' => 'unexistUser@examplel.com',
+            'email' => 'nonexistUser@examplel.com',
             'password' => 'password',
         ]);
         $response->assertStatus(401)
