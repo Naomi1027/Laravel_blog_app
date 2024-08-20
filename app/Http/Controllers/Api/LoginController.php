@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\loginRequest;
+use App\Http\Requests\Api\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +16,7 @@ class LoginController extends Controller
      * @param loginRequest $request
      * @return Response
      */
-    public function login(loginRequest $request): Response
+    public function login(LoginRequest $request): Response
     {
         $credentials = $request->validated();
         $user = User::where('email', $credentials['email'])->first();
