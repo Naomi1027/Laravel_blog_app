@@ -11,7 +11,7 @@ class LoginControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @var User $user */
+    /** @var User */
     protected $user;
 
     protected function setUp(): void
@@ -136,6 +136,24 @@ class LoginControllerTest extends TestCase
         $response->assertStatus(401)
             ->assertJson([
                 'message' => 'ログインに失敗しました!',
+            ]);
+        $this->assertGuest();
+    }
+
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function 存在しないユーザーでログインしようとするとエラーが発生すること(): void
+    {
+        $response = $this->postJson('/api/login', [
+            'email' => 'unexistUser@examplel.com',
+            'password' => 'password',
+        ]);
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => '登録して下さい!',
             ]);
         $this->assertGuest();
     }

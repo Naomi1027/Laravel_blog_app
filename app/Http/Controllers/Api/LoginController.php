@@ -21,8 +21,12 @@ class LoginController extends Controller
         $credentials = $request->validated();
         $user = User::where('email', $credentials['email'])->first();
 
-        // 認証が成功した場合
-        if ($user->email_verified_at !== null && Auth::attempt($credentials)) {
+        // ユーザーが存在しない場合
+        if ($user === null) {
+            return response()->json([
+                'message' => '登録して下さい!',
+            ], 401);
+        } elseif ($user->email_verified_at !== null && Auth::attempt($credentials)) {
             // セッションIDの生成
             $request->session()->regenerate();
 
@@ -30,11 +34,26 @@ class LoginController extends Controller
                 'message' => 'ログインに成功しました!',
                 'user' => auth()->user(),
             ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'message' => 'ログインに失敗しました!',
+            ], 401);
         }
 
-        // 認証が失敗した場合
-        return response()->json([
-            'message' => 'ログインに失敗しました!',
-        ], 401);
+        // // 認証が成功した場合
+        // if ($user->email_verified_at !== null && Auth::attempt($credentials)) {
+        //     // セッションIDの生成
+        //     $request->session()->regenerate();
+
+        //     return response()->json([
+        //         'message' => 'ログインに成功しました!',
+        //         'user' => auth()->user(),
+        //     ], Response::HTTP_OK);
+        // }
+
+        // // 認証が失敗した場合
+        // return response()->json([
+        //     'message' => 'ログインに失敗しました!',
+        // ], 401);
     }
 }
