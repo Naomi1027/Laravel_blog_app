@@ -17,20 +17,12 @@ class LogoutController extends Controller
      */
     public function logout(Request $request): Response
     {
-        // ログインしていない場合
-        if (Auth::check() === false) {
-            return response()->json([
-                'message' => 'ログインしていません!',
-            ], Response::HTTP_UNAUTHORIZED);
-        } else {
-            // ログインしている場合
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-            return response()->json([
-                'message' => 'ログアウトしました!',
-            ], Response::HTTP_OK);
-        }
+        return response()->json([
+            'message' => 'ログアウトしました!',
+        ], Response::HTTP_OK);
     }
 }

@@ -29,6 +29,8 @@ Route::post('/email/verify', [VerifyEmailController::class, 'verifyEmail'])->nam
 
 Route::post('/login', [LoginController::class, 'login']);
 
-Route::post('/logout', [LogoutController::class, 'logout']);
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [LogoutController::class, 'logout']);
+});
 
 Route::get('/articles', [ArticleController::class, 'index']);
