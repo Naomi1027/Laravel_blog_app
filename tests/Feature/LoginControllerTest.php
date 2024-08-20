@@ -39,6 +39,7 @@ class LoginControllerTest extends TestCase
                     ->where('user.id', $this->user->id)
                     ->etc()
             );
+        // ユーザーが認証されていること
         $this->assertAuthenticatedAs($this->user);
     }
 
@@ -125,6 +126,7 @@ class LoginControllerTest extends TestCase
      */
     public function メール認証済でないとログインできないこと(): void
     {
+        // メール認証済でないユーザーを作成
         $this->user->email_verified_at = null;
         $this->user->save();
 
@@ -137,6 +139,7 @@ class LoginControllerTest extends TestCase
             ->assertJson([
                 'message' => 'ログインに失敗しました!',
             ]);
+        // ユーザーが認証されていないこと
         $this->assertGuest();
     }
 
@@ -147,6 +150,7 @@ class LoginControllerTest extends TestCase
      */
     public function 存在しないユーザーでログインしようとするとエラーが発生すること(): void
     {
+        // 存在しないユーザーでログイン
         $response = $this->postJson('/api/login', [
             'email' => 'nonexistUser@examplel.com',
             'password' => 'password',
@@ -155,6 +159,7 @@ class LoginControllerTest extends TestCase
             ->assertJson([
                 'message' => '登録して下さい!',
             ]);
+        // ユーザーが認証されていないこと
         $this->assertGuest();
     }
 }

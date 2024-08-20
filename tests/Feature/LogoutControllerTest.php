@@ -21,7 +21,7 @@ class LogoutControllerTest extends TestCase
     public function ログアウトが成功すること(): void
     {
         $user = User::factory()->create();
-        // actingAsでログイン状態をシミュレート
+        // actingAsでログイン状態にする
         $response = $this->actingAs($user)
             ->postJson('/api/logout');
 
@@ -40,6 +40,7 @@ class LogoutControllerTest extends TestCase
      */
     public function 認証が済んでいないユーザーがログアウトした場合はエラーが発生すること(): void
     {
+        // メール認証が済んでいないユーザーを作成
         $this->user = User::factory()->create([
             'name' => 'test',
             'email' => 'test@example.com',
