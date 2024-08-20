@@ -10,7 +10,7 @@ class LogoutControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @var User $user */
+    /** @var User */
     protected $user;
 
     /**
