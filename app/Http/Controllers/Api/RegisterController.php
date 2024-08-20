@@ -33,7 +33,7 @@ class RegisterController extends Controller
         event(new Registered($user));
 
         return response()->json([
-            'message' => 'Registered!',
+            'message' => '登録しました!',
             'name' => $user->name,
             'email' => $user->email,
         ], Response::HTTP_OK);
