@@ -19,6 +19,7 @@ class LoginControllerTest extends TestCase
         parent::setUp();
         // テストユーザ作成
         $this->user = User::factory()->create();
+        $this->withHeader('Referer', 'http://localhost');
     }
 
     /**
@@ -32,12 +33,18 @@ class LoginControllerTest extends TestCase
             'email' => $this->user->email,
             'password' => 'password',
         ]);
-
+        // dd($response, $this->user);
         $response->assertStatus(200)
             ->assertJson(
                 fn (AssertableJson $json) => $json->where('message', 'ログインに成功しました!')
                     ->where('user.id', $this->user->id)
-                    ->etc()
+                    ->where('user.name', $this->user->name)
+                    ->where('user.email', $this->user->email)
+                    ->where('user.created_at', $this->user->created_at->toISOString())
+                    ->where('user.updated_at', $this->user->updated_at->toISOString())
+                    ->where('user.email_verified_at', $this->user->email_verified_at->toISOString())
+                    ->where('user.icon_path', $this->user->icon_path)
+                    ->where('user.display_name', $this->user->display_name)
             );
         // ユーザーが認証されていること
         $this->assertAuthenticatedAs($this->user);
@@ -137,7 +144,7 @@ class LoginControllerTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'message' => 'ログインに失敗しました!',
+                'message' => 'メールアドレスが認証されていません!',
             ]);
         // ユーザーが認証されていないこと
         $this->assertGuest();
@@ -157,7 +164,7 @@ class LoginControllerTest extends TestCase
         ]);
         $response->assertStatus(401)
             ->assertJson([
-                'message' => '登録して下さい!',
+                'message' => '不正な認証情報です',
             ]);
         // ユーザーが認証されていないこと
         $this->assertGuest();
