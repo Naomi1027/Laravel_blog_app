@@ -33,7 +33,7 @@ class LoginRequest extends FormRequest
     {
         $response = [
             'status' => 422,
-            'message' => '適切な値を入力してください。',
+            'message' => '適切な値を入力してください',
             'errors' => $validator->errors(),
         ];
 
