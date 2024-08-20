@@ -26,7 +26,7 @@ class LoginController extends Controller
             return response()->json([
                 'message' => '登録して下さい!',
             ], 401);
-        // 認証が成功した場合
+            // 認証が成功した場合
         } elseif ($user->email_verified_at !== null && Auth::attempt($credentials)) {
             // セッションIDの生成
             $request->session()->regenerate();
