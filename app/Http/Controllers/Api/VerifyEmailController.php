@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\EmailVerificationRequest;
+use App\Http\Requests\Api\EmailVerificationRequest;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 
