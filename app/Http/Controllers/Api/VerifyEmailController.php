@@ -25,7 +25,7 @@ class VerifyEmailController extends Controller
         // hash値を確認して一致しない場合はエラーを返す
         if (sha1($user->email) !== $validated['hash']) {
             return response()->json([
-                'message' => 'Invalid hash!',
+                'message' => '不正なhashです!',
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -33,7 +33,7 @@ class VerifyEmailController extends Controller
         $user->markEmailAsVerified();
 
         return response()->json([
-            'message' => 'Successfully Verified!',
+            'message' => '認証に成功しました!',
         ], Response::HTTP_OK);
     }
 }

@@ -43,7 +43,7 @@ class VerifyEmailControllerTest extends TestCase
             ])
             // 新規登録したユーザーと認証メールが送られたユーザーが一致するか
             ->assertJson([
-                'message' => 'Successfully Verified!',
+                'message' => '認証に成功しました!',
             ]);
         // ユーザーが認証されたか確認
         $this->assertDatabaseHas('users', [
