@@ -21,16 +21,16 @@ class LogoutControllerTest extends TestCase
     public function ログアウトが成功すること(): void
     {
         $user = User::factory()->create();
+        $this->withHeader('Referer', 'http://localhost');
         // actingAsでログイン状態にする
-        $response = $this->actingAs($user)
-            ->postJson('/api/logout');
+        $response = $this->actingAs($user)->postJson('/api/logout');
 
         $response->assertStatus(200)
             ->assertJson([
                 'message' => 'ログアウトしました!',
             ]);
         // ユーザーが認証されていないこと
-        $this->assertGuest();
+        $this->assertGuest('web');
     }
 
     /**
@@ -47,11 +47,12 @@ class LogoutControllerTest extends TestCase
             'password' => 'password1',
             'email_verified_at' => null,
         ]);
+        $this->withHeader('Referer', 'http://localhost');
         $response = $this->postJson('/api/logout');
 
         $response->assertStatus(401)
             ->assertJson([
-                'message' => 'ログインしていません!',
+                'message' => 'Unauthenticated.',
             ]);
     }
 }
