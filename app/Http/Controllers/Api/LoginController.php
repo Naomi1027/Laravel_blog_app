@@ -24,10 +24,11 @@ class LoginController extends Controller
         // ユーザーが存在しない場合
         if ($user === null) {
             return response()->json([
-                'message' => '登録して下さい!',
+                'message' => '不正な認証情報です',
             ], 401);
-            // 認証が成功した場合
-        } elseif ($user->email_verified_at !== null && Auth::attempt($credentials)) {
+        }
+        // 認証が成功した場合
+        if ($user->email_verified_at !== null && Auth::attempt($credentials)) {
             // セッションIDの生成
             $request->session()->regenerate();
 
@@ -35,11 +36,11 @@ class LoginController extends Controller
                 'message' => 'ログインに成功しました!',
                 'user' => auth()->user(),
             ], Response::HTTP_OK);
-        } else {
-            // メール認証が済んでいない場合
-            return response()->json([
-                'message' => 'ログインに失敗しました!',
-            ], 401);
         }
+
+        // メール認証が済んでいない場合
+        return response()->json([
+            'message' => 'メールアドレスが認証されていません!',
+        ], 401);
     }
 }
