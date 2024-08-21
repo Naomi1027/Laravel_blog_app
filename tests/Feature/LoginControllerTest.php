@@ -33,7 +33,7 @@ class LoginControllerTest extends TestCase
             'email' => $this->user->email,
             'password' => 'password',
         ]);
-        // dd($response, $this->user);
+
         $response->assertStatus(200)
             ->assertJson(
                 fn (AssertableJson $json) => $json->where('message', 'ログインに成功しました!')
