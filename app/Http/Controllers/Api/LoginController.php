@@ -36,7 +36,7 @@ class LoginController extends Controller
             ], 401);
         }
         // 認証されなかった場合
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
 
             return response()->json([
                 'message' => '不正な認証情報です',
