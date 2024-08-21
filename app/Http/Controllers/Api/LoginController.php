@@ -13,7 +13,7 @@ class LoginController extends Controller
     /**
      * ログイン処理を行うFunction
      *
-     * @param loginRequest $request
+     * @param LoginRequest $request
      * @return Response
      */
     public function login(LoginRequest $request): Response
@@ -22,22 +22,28 @@ class LoginController extends Controller
         $user = User::where('email', $credentials['email'])->first();
 
         // ユーザーが存在しない場合
-        if ($user === null) {
+        if (is_null($user)) {
 
             return response()->json([
                 'message' => '不正な認証情報です',
             ], 401);
         }
         // メール認証が済んでいない場合
-        if ($user->email_verified_at === null) {
+        if ($user->email_verified_at == null) {
 
             return response()->json([
                 'message' => 'メールアドレスが認証されていません!',
             ], 401);
         }
-        // 認証が成功した場合
-        Auth::attempt($credentials);
-        // セッションIDの生成
+        // 認証されなかった場合
+        if (!Auth::attempt($credentials)) {
+
+            return response()->json([
+                'message' => '不正な認証情報です',
+            ], 401);
+        }
+
+        // 認証されたユーザーはセッションIDの生成
         $request->session()->regenerate();
 
         return response()->json([
