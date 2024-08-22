@@ -29,7 +29,7 @@ class LoginController extends Controller
             ], 401);
         }
         // メール認証が済んでいない場合
-        if ($user->email_verified_at == null) {
+        if (is_null($user->email_verified_at)) {
 
             return response()->json([
                 'message' => 'メールアドレスが認証されていません!',
