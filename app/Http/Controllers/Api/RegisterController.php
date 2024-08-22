@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\Api\RegisterRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +33,7 @@ class RegisterController extends Controller
         event(new Registered($user));
 
         return response()->json([
-            'message' => 'Registered!',
+            'message' => '登録しました!',
             'name' => $user->name,
             'email' => $user->email,
         ], Response::HTTP_OK);

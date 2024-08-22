@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\LogoutController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\VerifyEmailController;
 use Illuminate\Http\Request;
@@ -24,5 +26,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
 Route::post('/email/verify', [VerifyEmailController::class, 'verifyEmail'])->name('verification.verify');
+
+Route::post('/login', [LoginController::class, 'login']);
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [LogoutController::class, 'logout']);
+});
 
 Route::get('/articles', [ArticleController::class, 'index']);
