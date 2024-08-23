@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('/articles', [ArticleController::class, 'index']);
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
@@ -31,6 +32,5 @@ Route::post('/login', [LoginController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [LogoutController::class, 'logout']);
+    Route::post('/articles', [ArticleController::class, 'store']);
 });
-
-Route::get('/articles', [ArticleController::class, 'index']);
