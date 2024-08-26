@@ -43,6 +43,8 @@ class StoreArticleRequest extends FormRequest
             'content.required' => '本文は必須です。',
             'content.string' => '本文は文字列にして下さい。',
             'tags.max' => 'タグは:maxつまで選択して下さい',
+            'tags.*.integer' => '選択されたタグが不正です。',
+            'tags.*.exists' => '選択されたタグが不正です。',
         ];
     }
 
