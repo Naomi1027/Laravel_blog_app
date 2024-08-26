@@ -44,7 +44,7 @@ class StoreArticleRequest extends FormRequest
             'content.string' => '本文は文字列にして下さい。',
             'tags.max' => 'タグは:maxつまで選択して下さい',
             'tags.*.integer' => '選択されたタグが不正です。',
-            'tags.*.exists' => '選択されたタグが不正です。',
+            'tags.*.exists' => '選択されたタグは存在しません。',
         ];
     }
 
