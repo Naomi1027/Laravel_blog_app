@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Article;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,7 +14,7 @@ class ArticleControllerStoreTest extends TestCase
     use RefreshDatabase;
 
     /** @var User */
-    protected $user;
+    protected User $user;
 
     protected function setUp(): void
     {
@@ -57,7 +58,7 @@ class ArticleControllerStoreTest extends TestCase
      */
     public function 記事投稿ができること(): void
     {
-        $tags = Tag::all();
+        $tags = Tag::take(3)->get();
 
         // actingAsでログイン状態にする
         $this->actingAs($this->user);
@@ -85,12 +86,6 @@ class ArticleControllerStoreTest extends TestCase
                         '*' => [
                             'name',
                         ],
-                        [
-                            'name',
-                        ],
-                        [
-                            'name',
-                        ],
                     ],
                 ],
             ])
@@ -102,9 +97,9 @@ class ArticleControllerStoreTest extends TestCase
                     'icon_path' => $this->user->icon_path,
                     'number_of_likes' => 0,
                     'tags' => [
-                        ['name' => '犬'],
-                        ['name' => '猫'],
-                        ['name' => 'ゲーム'],
+                        ['name' => $tags[0]->name],
+                        ['name' => $tags[1]->name],
+                        ['name' => $tags[2]->name],
                     ],
                 ],
             ]);
@@ -113,6 +108,19 @@ class ArticleControllerStoreTest extends TestCase
             'title' => 'test title',
             'content' => 'test content',
             'user_id' => $this->user->id,
+        ]);
+        // 中間テーブルに保存されていることを確認
+        $this->assertDatabaseHas('article_tag', [
+            'article_id' => Article::first()->id,
+            'tag_id' => $tags[0]->id,
+        ]);
+        $this->assertDatabaseHas('article_tag', [
+            'article_id' => Article::first()->id,
+            'tag_id' => $tags[1]->id,
+        ]);
+        $this->assertDatabaseHas('article_tag', [
+            'article_id' => Article::first()->id,
+            'tag_id' => $tags[2]->id,
         ]);
     }
 
@@ -215,6 +223,30 @@ class ArticleControllerStoreTest extends TestCase
                 ],
                 [
                     'tags' => 'tagsは配列でなくてはなりません。',
+                ],
+            ],
+            'tagsの要素が文字列の場合' => [
+                [
+                    'title' => 'test title',
+                    'content' => 'test content',
+                    'tags' => ['test', 'test', 'test'],
+                ],
+                [
+                    'tags.0' => '選択されたタグが不正です。',
+                    'tags.1' => '選択されたタグが不正です。',
+                    'tags.2' => '選択されたタグが不正です。',
+                ],
+            ],
+            'tagsが存在しないIDの場合' => [
+                [
+                    'title' => 'test title',
+                    'content' => 'test content',
+                    'tags' => [100, 101, 102],
+                ],
+                [
+                    'tags.0' => '選択されたタグが不正です。',
+                    'tags.1' => '選択されたタグが不正です。',
+                    'tags.2' => '選択されたタグが不正です。',
                 ],
             ],
         ];
