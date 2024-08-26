@@ -65,7 +65,7 @@ class ArticleControllerIndexTest extends TestCase
                 );
             });
         // id1から10まで取得する
-        $articleLists = $articles->where('id', '<', 11);
+        $articleLists = $articles->where('id', '<', 11)->values();
 
         $response = $this->getJson('/api/articles');
         $response->assertStatus(200)
@@ -114,7 +114,7 @@ class ArticleControllerIndexTest extends TestCase
     {
         $tags = Tag::all();
         // articleのid番号51~60まで作成
-        $articles = Article::factory()
+        Article::factory()
             ->count(10)
             ->create()
             ->each(function ($article) use ($tags) {
@@ -123,9 +123,9 @@ class ArticleControllerIndexTest extends TestCase
                 );
             });
         // articleのid番号51を論理削除する
-        $articles->first()->delete();
+        Article::first()->delete();
         // 論理削除含まないid52番から60番まで取得
-        $articleLists = Article::all();
+        $articleLists = Article::all()->values();
 
         $response = $this->getJson('/api/articles');
         $response->assertStatus(200)
