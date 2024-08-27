@@ -30,16 +30,15 @@ class Handler extends ExceptionHandler
 
         $this->renderable(function (Throwable $e, $request) {
             if ($request->is('api/*')) {
-                $title = '';
-                $detail = '';
-
                 if ($e instanceof HttpException) {
-                    $cast = fn ($orig): HttpException => $orig;  // HttpException へ型変換
-                    $httpEx = $cast($e);
-                    switch ($httpEx->getStatusCode()) {
+                    switch ($e->getStatusCode()) {
                         case 403:
                             $title = __('Forbidden');
-                            $detail = __($httpEx->getMessage() ?: 'Forbidden');
+                            $detail = __($e->getMessage() ?: 'Forbidden');
+                            break;
+                        case 404:
+                            $title = __('Not Found');
+                            $detail = __($e->getMessage() ?: 'Not Found');
                             break;
                         default:
                             return;
@@ -47,14 +46,13 @@ class Handler extends ExceptionHandler
 
                     return response()->json([
                         'title' => $title,
-                        'status' => $httpEx->getStatusCode(),
+                        'status' => $e->getStatusCode(),
                         'detail' => $detail,
-                    ], $httpEx->getStatusCode(), [
+                    ], $e->getStatusCode(), [
                         'Content-Type' => 'application/problem+json',
                     ]);
                 }
             }
         });
-
     }
 }
