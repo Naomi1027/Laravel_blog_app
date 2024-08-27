@@ -8,6 +8,7 @@ use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ArticleController extends Controller
 {
@@ -57,8 +58,13 @@ class ArticleController extends Controller
             ->where('user_id', Auth::id())
             ->first();
 
+        // $articleIdが存在しない場合は、404エラーを返す
+        if (Article::where('id', $articleId)->doesntExist()) {
+            throw new HttpException(404, 'このURLは存在しません。');
+        }
+        // ログインユーザーが記事の投稿者でない場合は、403エラーを返す
         if (! $article) {
-            abort(403, 'Unauthorized.');
+            throw new HttpException(403, '権限がありません。');
         }
 
         $article->update($validated);
