@@ -41,4 +41,34 @@ class ArticleController extends Controller
 
         return new ArticleResource($article);
     }
+
+    /**
+     * 記事を更新するFunction
+     *
+     * @param StoreArticleRequest $request
+     * @param int $articleId
+     * @return JsonResource
+     */
+    public function update(StoreArticleRequest $request, int $articleId): JsonResource
+    {
+        $validated = $request->safe()->except(['tags']);
+
+        $article = Article::where('id', $articleId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (! $article) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $article->update($validated);
+
+        if ($request->safe()->has('tags')) {
+            $article->tags()->sync($request->safe()['tags']);
+        } else {
+            $article->tags()->detach();
+        }
+
+        return new ArticleResource($article);
+    }
 }
