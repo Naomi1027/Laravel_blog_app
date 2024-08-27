@@ -148,6 +148,12 @@ class ArticleControllerUpdateTest extends TestCase
             'content' => '本文',
             'user_id' => $this->user->id,
         ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
         // ログインして記事を編集
         $response = $this->actingAs($this->user)
             ->putJson('/api/articles/'. $article->id, $data);
@@ -280,6 +286,12 @@ class ArticleControllerUpdateTest extends TestCase
             'content' => '本文',
             'user_id' => $this->user->id,
         ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
         // 未ログインで記事を編集
         $response = $this->putJson('/api/articles/'. $article->id, [
             'title' => 'タイトル編集',
@@ -309,6 +321,12 @@ class ArticleControllerUpdateTest extends TestCase
         $tags = Tag::take(3)->get();
         // 記事を投稿
         $article = Article::factory()->create([
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
             'title' => 'タイトル',
             'content' => '本文',
             'user_id' => $this->user->id,
