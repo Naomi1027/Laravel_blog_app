@@ -384,7 +384,7 @@ class ArticleControllerUpdateTest extends TestCase
         ]);
         // ログインして存在しない記事IDを指定して記事を編集
         $response = $this->actingAs($this->user)
-            ->putJson('/api/articles/'. $article->id + 1, [
+            ->putJson('/api/articles/'. ($article->id + 1), [
                 'title' => 'タイトル編集',
                 'content' => '本文編集',
                 'tags' => [
