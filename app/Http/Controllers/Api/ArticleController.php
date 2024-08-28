@@ -54,16 +54,16 @@ class ArticleController extends Controller
     {
         $validated = $request->safe()->except(['tags']);
 
+        // 記事IDに紐づく記事を取得
         $article = Article::where('id', $articleId)
-            ->where('user_id', Auth::id())
             ->first();
 
         // $articleIdが存在しない場合は、404エラーを返す
-        if (Article::where('id', $articleId)->doesntExist()) {
-            throw new HttpException(404, 'このURLは存在しません。');
+        if (!$article) {
+            throw new HttpException(404, 'この記事は存在しません。');
         }
         // ログインユーザーが記事の投稿者でない場合は、403エラーを返す
-        if (! $article) {
+        if (Auth::id() !== $article->user_id) {
             throw new HttpException(403, '権限がありません。');
         }
 
