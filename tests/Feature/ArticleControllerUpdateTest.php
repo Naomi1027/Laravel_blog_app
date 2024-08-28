@@ -66,6 +66,7 @@ class ArticleControllerUpdateTest extends TestCase
         ]);
         // 編集前のDBの状態を確認
         $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
             'title' => 'タイトル',
             'content' => '本文',
             'user_id' => $this->user->id,
@@ -113,6 +114,7 @@ class ArticleControllerUpdateTest extends TestCase
             ]);
         // 編集後DBに保存されていることを確認
         $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
             'title' => 'タイトル編集',
             'content' => '本文編集',
             'user_id' => $this->user->id,
@@ -150,6 +152,7 @@ class ArticleControllerUpdateTest extends TestCase
         ]);
         // 編集前のDBの状態を確認
         $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
             'title' => 'タイトル',
             'content' => '本文',
             'user_id' => $this->user->id,
@@ -163,6 +166,7 @@ class ArticleControllerUpdateTest extends TestCase
             ->assertJsonValidationErrors($expectedErrors);
         // // DBに編集が反映されていないことを確認
         $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
             'title' => 'タイトル',
             'content' => '本文',
             'user_id' => $this->user->id,
@@ -288,6 +292,7 @@ class ArticleControllerUpdateTest extends TestCase
         ]);
         // 編集前のDBの状態を確認
         $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
             'title' => 'タイトル',
             'content' => '本文',
             'user_id' => $this->user->id,
@@ -305,6 +310,7 @@ class ArticleControllerUpdateTest extends TestCase
         $response->assertStatus(401);
         // DBに編集が反映されていないことを確認
         $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
             'title' => 'タイトル',
             'content' => '本文',
             'user_id' => $this->user->id,
@@ -316,7 +322,7 @@ class ArticleControllerUpdateTest extends TestCase
      *
      * @return void
      */
-    public function 他のユーザーの記事は編集できないこと(): void
+    public function 他のユーザーの記事を編集しようとした場合403エラーが返り編集できないこと(): void
     {
         $tags = Tag::take(3)->get();
         // 記事を投稿
@@ -327,6 +333,7 @@ class ArticleControllerUpdateTest extends TestCase
         ]);
         // 編集前のDBの状態を確認
         $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
             'title' => 'タイトル',
             'content' => '本文',
             'user_id' => $this->user->id,
@@ -347,6 +354,49 @@ class ArticleControllerUpdateTest extends TestCase
         $response->assertStatus(403);
         // DBに編集が反映されていないことを確認
         $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+    }
+
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function 存在しない記事IDを指定した場合404エラーが返ること(): void
+    {
+        $tags = Tag::take(3)->get();
+        // 記事を投稿
+        $article = Article::factory()->create([
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // ログインして存在しない記事IDを指定して記事を編集
+        $response = $this->actingAs($this->user)
+            ->putJson('/api/articles/'. $article->id + 1, [
+                'title' => 'タイトル編集',
+                'content' => '本文編集',
+                'tags' => [
+                    $tags[0]->id,
+                    $tags[1]->id,
+                ],
+            ]);
+        // 404レスポンスが返ってくること
+        $response->assertStatus(404);
+        // DBに編集が反映されていないことを確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
             'title' => 'タイトル',
             'content' => '本文',
             'user_id' => $this->user->id,
