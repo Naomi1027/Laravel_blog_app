@@ -59,7 +59,7 @@ class ArticleController extends Controller
             ->first();
 
         // $articleIdが存在しない場合は、404エラーを返す
-        if (!$article) {
+        if (! $article) {
             throw new HttpException(404, 'この記事は存在しません。');
         }
         // ログインユーザーが記事の投稿者でない場合は、403エラーを返す
