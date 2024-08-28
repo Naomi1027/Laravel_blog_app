@@ -29,30 +29,24 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (Throwable $e, $request) {
-            if ($request->is('api/*')) {
-                if ($e instanceof HttpException) {
-                    switch ($e->getStatusCode()) {
-                        case 403:
-                            $title = __('Forbidden');
-                            $detail = __($e->getMessage() ?: 'Forbidden');
-                            break;
-                        case 404:
-                            $title = __('Not Found');
-                            $detail = __($e->getMessage() ?: 'Not Found');
-                            break;
-                        default:
-                            return;
-                    }
-
-                    return response()->json([
-                        'title' => $title,
-                        'status' => $e->getStatusCode(),
-                        'detail' => $detail,
-                    ], $e->getStatusCode(), [
-                        'Content-Type' => 'application/problem+json',
-                    ]);
-                }
+            if (!$request->is('api/*') || !$e instanceof HttpException) {
+                return;
             }
+
+            $statusCode = $e->getStatusCode();
+
+            [$title, $detail] = match ($statusCode) {
+                403 => ['Forbidden', $e->getMessage() ?: 'Forbidden'],
+                404 => ['Not Found', $e->getMessage() ?: 'Not Found'],
+            };
+
+            return response()->json([
+                'title' => $title,
+                'status' => $statusCode,
+                'detail' => $detail,
+            ], $statusCode, [
+                'Content-Type' => 'application/problem+json',
+            ]);
         });
     }
 }
