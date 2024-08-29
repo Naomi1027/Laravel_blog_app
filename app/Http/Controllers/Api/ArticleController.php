@@ -103,6 +103,10 @@ class ArticleController extends Controller
         // 紐付くタグを削除
         $article->tags()->detach();
 
-        return response()->json(null, 204);
+        return response()->json([
+            'message' => '記事を削除しました。',
+            'detail' => $article,
+            'statusCode200' => Response::HTTP_OK,
+        ]);
     }
 }
