@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
@@ -29,24 +28,26 @@ class Handler extends ExceptionHandler
             //
         });
 
-        $this->renderable(function (HttpException $e, Request $request) {
-            if ($request->is('api/*')) {
-                $statusCode = $e->getStatusCode();
-
-                [$title, $detail] = match ($statusCode) {
-                    403 => ['Forbidden', $e->getMessage() ?: 'Forbidden'],
-                    404 => ['Not Found', $e->getMessage() ?: 'Not Found'],
-                    default => ['Error', $e->getMessage() ?: 'An error occurred'],
-                };
-
-                return response()->json([
-                    'title' => $title,
-                    'status' => $statusCode,
-                    'detail' => $detail,
-                ], $statusCode, [
-                    'Content-Type' => 'application/problem+json',
-                ]);
+        $this->renderable(function (Throwable $e, $request) {
+            if (! $request->is('api/*') || ! $e instanceof HttpException) {
+                return;
             }
+
+            $statusCode = $e->getStatusCode();
+
+            [$title, $detail] = match ($statusCode) {
+                403 => ['Forbidden', $e->getMessage() ?: 'Forbidden'],
+                404 => ['Not Found', $e->getMessage() ?: 'Not Found'],
+                default => ['Error', $e->getMessage() ?: 'An error occurred'],
+            };
+
+            return response()->json([
+                'title' => $title,
+                'status' => $statusCode,
+                'detail' => $detail,
+            ], $statusCode, [
+                'Content-Type' => 'application/problem+json',
+            ]);
         });
     }
 }
