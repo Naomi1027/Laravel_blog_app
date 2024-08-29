@@ -16,6 +16,7 @@ class ArticleResource extends JsonResource
     {
         /** @var \App\Models\Article $this */
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'created_at' => $this->created_at->toDateTimeString(),
             'display_name' => $this->user->display_name,
