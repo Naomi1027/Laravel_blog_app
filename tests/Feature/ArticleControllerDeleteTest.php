@@ -7,17 +7,16 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Carbon\Carbon;
 
 class ArticleControllerDeleteTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @var User
-     * @var Article
-     * */
+    /** @var User */
     protected User $user;
 
+    /** @var Article */
     protected Article $article;
 
     protected function setUp(): void
@@ -92,11 +91,27 @@ class ArticleControllerDeleteTest extends TestCase
             'article_id' => $this->article->id,
             'tag_id' => $tags[2]->id,
         ]);
+
         // ログインして記事を削除
         $response = $this->actingAs($this->user)
             ->deleteJson('/api/articles/'. $this->article->id);
-
-        $response->assertNoContent(204);
+        // 時間を固定
+        Carbon::setTestNow(Carbon::parse($response['detail']['deleted_at']));
+        // 200レスポンスが返ることを確認
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => '記事を削除しました。',
+                'detail' => [
+                    'id' => $this->article->id,
+                    'title' => 'タイトル',
+                    'content' => '本文',
+                    'created_at' => $this->article->created_at->toISOString(),
+                    'updated_at' => $this->article->updated_at->toISOString(),
+                    'deleted_at' => now()->toISOString(),
+                    'user_id' => $this->user->id,
+                ],
+                'statusCode' => 200,
+            ]);
         // 論理削除されたことを確認
         $this->assertSoftDeleted($this->article);
         // 削除後のarticlesテーブルを確認
@@ -224,7 +239,7 @@ class ArticleControllerDeleteTest extends TestCase
         $response = $this->actingAs($this->user)
             ->deleteJson('/api/articles/'. $this->article->id);
         // 204レスポンスが返ることを確認
-        $response->assertNoContent(204);
+        $response->assertStatus(200);
         // 論理削除されたことを確認
         $this->assertSoftDeleted($this->article);
         // 削除後のarticlesテーブルを確認
