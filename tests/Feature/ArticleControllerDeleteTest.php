@@ -13,10 +13,11 @@ class ArticleControllerDeleteTest extends TestCase
     use RefreshDatabase;
 
     /**
-     *  @var User $user
-     *  @var Article $article
+     * @var User
+     * @var Article
      * */
     protected User $user;
+
     protected Article $article;
 
     protected function setUp(): void
