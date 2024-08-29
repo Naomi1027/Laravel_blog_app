@@ -106,7 +106,7 @@ class ArticleController extends Controller
         return response()->json([
             'message' => '記事を削除しました。',
             'detail' => $article,
-            'statusCode200' => Response::HTTP_OK,
+            'statusCode' => Response::HTTP_OK,
         ]);
     }
 }
