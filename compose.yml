@@ -30,6 +30,16 @@ services:
     volumes:
       - postgres-volume:/var/lib/postgresql/data
 
+  db-test:
+    build:
+      dockerfile: ./docker/db/Dockerfile
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_DB=testing
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=password
+      - PGTZ=Asia/Tokyo
 
   mail:
     image: axllent/mailpit:v1.13
