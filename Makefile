@@ -5,6 +5,7 @@ init:
 	docker compose exec app cp .env.example .env
 	docker compose exec app php artisan key:generate
 	@make npm-install
+    docker compose exec app npm run dev
 
 up:
 	docker compose up -d
