@@ -2,17 +2,11 @@
     "regions": [
         "hnd1"
     ],
-    "builds": [
-        {
-            "src": "/api/index.php",
-            "use": "vercel-php@0.7.2",
-            "config": { "phpVersion": "8.2.25" }
-        },
-        {
-            "src": "/public/**",
-            "use": "@vercel/static"
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.6.2"
         }
-    ],
+    },
     "routes": [
         {
             "src": "/build/assets/(.*)",
@@ -28,7 +22,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "/public/index.php"
+            "dest": "/api/index.php"
         }
     ],
     "env": {
