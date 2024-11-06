@@ -26,9 +26,11 @@
         }
     ],
     "env": {
+        "APP_ENV": "production",
         "APP_NAME": "Laravel Vercel",
         "APP_DEBUG": "false",
-        "APP_URL": "https://laravel-blog-app-ten.vercel.appyour-vercel-app.vercel.app",
+        "APP_URL": "https://laravel-blog-app-psi.vercel.app",
+        "APP_KEY": "base64:nQ6DylggHYrVlJ0cBqL2US+0SJ7YFlJKJmoZvrZB41E=",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
