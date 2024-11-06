@@ -2,11 +2,16 @@
     "regions": [
         "hnd1"
     ],
-    "functions": {
-        "api/index.php": {
-            "runtime": "vercel-php@0.6.2"
+    "builds": [
+        {
+            "src": "api/index.php",
+            "use": "vercel-php@0.6.2"
+        },
+        {
+            "src": "public/**",
+            "use": "vercel-php@0.6.2"
         }
-    },
+    ],
     "routes": [
         {
             "src": "/build/assets/(.*)",
@@ -26,9 +31,11 @@
         }
     ],
     "env": {
+        "APP_ENV": "production",
         "APP_NAME": "Laravel Vercel",
         "APP_DEBUG": "false",
-        "APP_URL": "https://laravel-blog-app-ten.vercel.appyour-vercel-app.vercel.app",
+        "APP_URL": "https://laravel-blog-app-psi.vercel.app",
+        "APP_KEY": "base64:nQ6DylggHYrVlJ0cBqL2US+0SJ7YFlJKJmoZvrZB41E=",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
@@ -38,6 +45,13 @@
         "CACHE_STORE": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
-        "VIEW_COMPILED_PATH": "/tmp"
+        "VIEW_COMPILED_PATH": "/tmp",
+        "DB_CONNECTION": "pgsql",
+        "DB_HOST": "ep-crimson-hat-a7ze1aei-pooler.ap-southeast-2.aws.neon.tech",
+        "DB_PORT": "5432",
+        "DB_DATABASE": "verceldb",
+        "DB_USERNAME": "default",
+        "DB_PASSWORD": "endpoint=ep-misty-snow-a14m8di4:EvnPuSze5b6R",
+        "DATABASE_URL": "postgres://default:EvnPuSze5b6R@ep-crimson-hat-a7ze1aei-pooler.ap-southeast-2.aws.neon.tech?sslmode=require"
     }
 }
