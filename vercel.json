@@ -2,6 +2,17 @@
     "regions": [
         "all"
     ],
+    "builds": [
+        {
+            "src": "/api/index.php",
+            "use": "vercel-php@0.7.2",
+            "config": { "phpVersion": "8.2.25" }
+        },
+        {
+            "src": "/public/**",
+            "use": "@vercel/static"
+        }
+    ],
     "routes": [
         {
             "src": "/build/assets/(.*)",
@@ -17,12 +28,13 @@
         },
         {
             "src": "/(.*)",
-            "dest": "/api/index.php"
+            "dest": "/public/index.php"
         }
     ],
     "env": {
         "APP_NAME": "Laravel Vercel",
         "APP_DEBUG": "false",
+        "APP_URL": "https://laravel-blog-app-ten.vercel.app",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
