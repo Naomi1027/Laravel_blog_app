@@ -77,4 +77,35 @@ class ArticleController extends Controller
 
         return new ArticleResource($article);
     }
+
+    /**
+     * 記事を削除するFunction
+     *
+     * @param int $articleId
+     * @return Response
+     */
+    public function destroy(int $articleId): Response
+    {
+        // 記事IDに紐づく記事を取得
+        $article = Article::find($articleId);
+
+        // $articleIdが存在しない場合は、404エラーを返す
+        if (! $article) {
+            throw new HttpException(404, 'この記事は存在しません。');
+        }
+        // ログインユーザーが記事の投稿者でない場合は、403エラーを返す
+        if (Auth::id() !== $article->user_id) {
+            throw new HttpException(403, '権限がありません。');
+        }
+        // 記事を削除
+        $article->delete();
+        // 紐付くタグを削除
+        $article->tags()->detach();
+
+        return response()->json([
+            'message' => '記事を削除しました。',
+            'detail' => $article,
+            'statusCode' => Response::HTTP_OK,
+        ]);
+    }
 }
