@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33276fc825e3a80f55fc37cf051a05d9",
+    "content-hash": "bc71c11cd75d81946e310aa4fc9cc4f1",
     "packages": [
         {
             "name": "brick/math",
@@ -7395,6 +7395,61 @@
                 }
             ],
             "time": "2024-04-24T06:32:35+00:00"
+        },
+        {
+            "name": "revolution/laravel-vercel-installer",
+            "version": "1.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kawax/laravel-vercel-installer.git",
+                "reference": "576923670b48e826eb8f2c8349c7a2633fca4a19"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kawax/laravel-vercel-installer/zipball/576923670b48e826eb8f2c8349c7a2633fca4a19",
+                "reference": "576923670b48e826eb8f2c8349c7a2633fca4a19",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^10.0||^11.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0||^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Revolution\\Vercel\\VercelInstallerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Revolution\\Vercel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "kawax",
+                    "email": "kawaxbiz@gmail.com"
+                }
+            ],
+            "description": "Vercel Installer",
+            "keywords": [
+                "laravel",
+                "vercel"
+            ],
+            "support": {
+                "issues": "https://github.com/kawax/laravel-vercel-installer/issues",
+                "source": "https://github.com/kawax/laravel-vercel-installer/tree/1.2.3"
+            },
+            "time": "2024-10-07T04:22:26+00:00"
         },
         {
             "name": "sebastian/cli-parser",
