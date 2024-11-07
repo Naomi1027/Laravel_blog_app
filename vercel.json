@@ -7,6 +7,9 @@
             "runtime": "vercel-php@0.6.2"
         }
     },
+    "rewrites": [
+    { "source": "/(.*)", "destination": "/public/$1" }
+    ],
     "routes": [
         {
             "src": "/build/assets/(.*)",
