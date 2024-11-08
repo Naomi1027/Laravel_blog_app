@@ -156,8 +156,6 @@ return [
     */
 
     'providers' => [
-        App\Providers\MailServiceProvider::class,
-
         ServiceProvider::defaultProviders()->merge([
         /*
          * Package Service Providers...
