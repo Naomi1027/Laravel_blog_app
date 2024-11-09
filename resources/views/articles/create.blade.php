@@ -5,8 +5,8 @@
         @csrf
         <div class="w-full">
             {{-- usersテーブルにアイコンが登録されている場合はアイコンを表示して、登録されていない場合は画像を登録するフォームを表示 --}}
-            @if (Auth::user()->icon_path)
-                <img src="{{ asset('storage/' . Auth::user()->icon_path) }}" alt="" class="w-24 h-24 rounded-full">
+            @if ($authUser->icon_path)
+                <img src="{{ $authUser->icon_path }}" alt="" class="w-24 h-24 rounded-full">
             @else
                 <div class="mb-6">
                     <label for="icon">アイコン</label>

@@ -40,7 +40,6 @@ class ArticleController extends Controller
 
         return view('articles.create', [
             'tags' => $tags,
-            'authUser' => $authUser,
         ]);
     }
 
