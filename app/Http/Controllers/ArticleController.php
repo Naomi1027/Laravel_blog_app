@@ -36,9 +36,11 @@ class ArticleController extends Controller
     public function create(): View
     {
         $tags = Tag::pluck('name', 'id')->toArray();
+        $authUser = Auth::user();
 
         return view('articles.create', [
             'tags' => $tags,
+            'authUser' => $authUser,
         ]);
     }
 

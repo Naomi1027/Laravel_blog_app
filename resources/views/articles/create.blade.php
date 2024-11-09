@@ -4,6 +4,17 @@
     <form method="POST" action="{{ route('articles.store') }}">
         @csrf
         <div class="w-full">
+            {{-- usersテーブルにアイコンが登録されている場合はアイコンを表示して、登録されていない場合は画像を登録するフォームを表示 --}}
+            @if (Auth::user()->icon_path)
+                <img src="{{ asset('storage/' . Auth::user()->icon_path) }}" alt="" class="w-24 h-24 rounded-full">
+            @else
+                <div class="mb-6">
+                    <label for="icon">アイコン</label>
+                    <input type="file" id="icon" name="icon" class="w-full border-solid border-2 p-2 text-xl">
+                    @error('icon')
+                        <p class="text-red-700">{{ $message }}</p>
+                    @enderror
+                </div>
             <div class="mb-6">
                 <label for="title">タイトル</label>
                 <input type="text" id="title" name="title" value="{{ old('title') }}" class="w-full border-solid border-2 p-2 text-xl">
