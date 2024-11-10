@@ -9,9 +9,9 @@
                 <img src="{{ $authUser->icon_path }}" alt="" class="w-24 h-24 rounded-full">
             @else
                 <div class="mb-6">
-                    <label for="icon">アイコン</label>
-                    <input type="file" id="icon" name="icon" class="w-full border-solid border-2 p-2 text-xl">
-                    @error('icon')
+                    <label for="icon_path">アイコン</label>
+                    <input type="file" id="icon_path" name="icon_path" class="w-full border-solid border-2 p-2 text-xl">
+                    @error('icon_path')
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
                 </div>
