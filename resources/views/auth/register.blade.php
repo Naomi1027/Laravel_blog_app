@@ -16,6 +16,21 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <!-- icon -->
+        <div class="mt-4">
+            <x-input-label for="icon_path" :value="__('アイコン')" />
+            <div class="col-md-6">
+                <input id="icon_path" type="file" name="icon_path" class="@error('icon_path') is-invalid @enderror">
+                @error('icon_path')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+            {{-- <x-text-input id="icon" class="col-md-4 col-form-label text-md-right" type="icon" name="icon" :value="old('icon')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('icon')" class="mt-2" /> --}}
+        </div>
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
