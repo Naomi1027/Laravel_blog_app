@@ -38,8 +38,8 @@ return [
 
         'direct' => [
             'driver' => 'local',
-            'root'   => public_path() . '/images',
-            'url' => env('APP_URL').'/public',
+            'root' => public_path('images'),  // 'images'ディレクトリを指定
+            'url' => env('APP_URL') . '/images',  // 正しいURLパスに修正
             'visibility' => 'public',
         ],
 

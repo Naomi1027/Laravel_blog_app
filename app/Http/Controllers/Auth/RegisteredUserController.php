@@ -46,7 +46,7 @@ class RegisteredUserController extends Controller
             // ファイルがある場合、オリジナルのファイル名で保存
             $iconPath = request()->file('icon_path')->getClientOriginalName();
             // request()->file('icon_path')->storeAs('public/images', $iconPath);
-            Storage::disk('direct')->put('public/images', $iconPath);
+            Storage::disk('direct')->put($iconPath, file_get_contents(request()->file('icon_path')));
         }
 
         $user = User::create([
