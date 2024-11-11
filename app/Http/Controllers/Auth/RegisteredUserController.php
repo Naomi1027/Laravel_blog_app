@@ -50,7 +50,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'icon_path' => 'storage/app/public/images' . '/' . $iconPath,
+            'icon_path' => $iconPath,
             'password' => Hash::make($request->password),
         ]);
 
