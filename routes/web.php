@@ -4,6 +4,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/foo', function () {
+    Artisan::call('storage:link');
+});
 
 Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/{userName}/articles/{articleId}', [ArticleController::class, 'show'])->where('articleId', '[0-9]+')->name('articles.show');
