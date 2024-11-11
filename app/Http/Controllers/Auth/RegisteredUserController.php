@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class RegisteredUserController extends Controller
 {
@@ -44,7 +45,8 @@ class RegisteredUserController extends Controller
         } else {
             // ファイルがある場合、オリジナルのファイル名で保存
             $iconPath = request()->file('icon_path')->getClientOriginalName();
-            request()->file('icon_path')->storeAs('public/images', $iconPath);
+            // request()->file('icon_path')->storeAs('public/images', $iconPath);
+            Storage::disk('direct')->put('public/images', $iconPath);
         }
 
         $user = User::create([
