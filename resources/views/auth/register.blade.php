@@ -9,6 +9,13 @@
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
+        <!-- Nickname -->
+        <div>
+            <x-input-label for="display_name" :value="__('ニックネーム')" />
+            <x-text-input id="display_name" class="block mt-1 w-full" type="text" name="display_name" :value="old('display_name')" required autofocus autocomplete="display_name" />
+            <x-input-error :messages="$errors->get('display_name')" class="mt-2" />
+        </div>
+
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
@@ -16,7 +23,7 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- icon -->
+        <!-- Icon -->
         <div class="mt-4">
             <x-input-label for="icon_path" :value="__('アイコン')" />
             <div class="col-md-6">
