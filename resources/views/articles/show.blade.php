@@ -86,7 +86,7 @@
     @auth
     <section class="border-2 border-gray-400 mt-4 p-8">
         <div class="flex mb-4">
-            <img src="{{ $authUser->icon_path }}" alt="" class="w-24 h-24 rounded-full">
+            <img src="{{ asset('images/' . $article->user->icon_path) }}" alt="アイコン" class="w-24 h-24 rounded-full" />
             <h3 class="text-2xl ml-4 mb-4">コメントする</h3>
         </div>
         <form method="POST" action="{{ route('comments.store', ['userName' => $article->user->name, 'articleId' => $article->id]) }}">
