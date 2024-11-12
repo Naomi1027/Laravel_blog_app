@@ -9,7 +9,7 @@
     <article class="flex">
         <div>
             <div class="w-40">
-                <img src="/storage/images/{{ $article->user->icon_path }}" alt="" class="w-24 h-24 rounded-full">
+                <img src="{{ asset('images/' . $article->user->icon_path) }}" alt="アイコン" class="w-24 h-24 rounded-full" />
             </div>
             <div class="flex mt-4 ml-6">
                 @if ($article->userLikes->contains($authUser))
