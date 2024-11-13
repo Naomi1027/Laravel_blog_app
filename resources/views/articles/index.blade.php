@@ -16,7 +16,7 @@
             <div class="mr-8">
                 {{-- アイコン --}}
                 @if ($article->user->icon_path === null)
-                    <img src="{{ asset('user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+                    <img src="{{ asset('images/user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
                 @else
                     <img src="{{ $article->user->icon_path }}" alt="アイコン" class="w-24 h-24 rounded-full" />
                 @endif
