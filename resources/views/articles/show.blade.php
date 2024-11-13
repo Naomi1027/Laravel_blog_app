@@ -9,18 +9,24 @@
     <article class="flex">
         <div>
             <div class="w-40">
-                <img src="{{ asset('images/' . $article->user->icon_path) }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+                {{-- アイコン --}}
+                @if ($article->user->icon_path === null)
+                    <img src="{{ asset('/images/user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+                @else
+                    <img src="{{ $article->user->icon_path }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+                @endif
             </div>
             <div class="flex mt-4 ml-6">
-                @if ($article->userLikes->contains($authUser))
-                <form method="POST" action="{{ route('articles.unlike', ['articleId' => $article->id]) }}">
-                    @method('delete')
-                @else
-                <form method="POST" action="{{ route('articles.like', ['articleId' => $article->id]) }}">
-                @endif
+                <form method="POST" action="{{ $article->userLikes->contains($authUser) ? route('articles.unlike', ['articleId' => $article->id]) : route('articles.like', ['articleId' => $article->id]) }}">
                     @csrf
+                    @if ($article->userLikes->contains($authUser))
+                        @method('delete')
+                    @endif
                     <button type="submit">
-                        <svg class="{{ $article->userLikes->contains($authUser) ? "h-12 w-12 text-orange-500" : "h-12 w-12 text-gray-500" }}" viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg></button>
+                        <svg class="{{ $article->userLikes->contains($authUser) ? 'h-12 w-12 text-orange-500' : 'h-12 w-12 text-gray-500' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                    </button>
                 </form>
                 <p class="pl-2 pt-4">{{ $article->userLikes->count() }}</p>
             </div>
@@ -66,7 +72,14 @@
     <section class="border-2 border-gray-400 mt-4 p-8">
         <h3 class="text-2xl ml-4 mb-4">コメント</h3>
         <div class="flex mb-4">
-            <img src="{{ asset('images/' . $comment->user->icon_path) }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+            {{-- アイコン --}}
+            @if ($comment->user->icon_path === null)
+                <img src="{{ asset('/images/user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+            @else
+                <img src="{{ $comment->user->icon_path }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+            @endif
+
+            {{-- <img src="{{ $comment->user->icon_path) }}" alt="アイコン" class="w-24 h-24 rounded-full" /> --}}
             <h2 class="mb-6 ml-4 text-2xl">{{ $comment->user->display_name }}</h2>
             @if (Auth::id() === $comment->user_id)
             <div class="flex-col space-y-2 ml-auto">
@@ -86,7 +99,8 @@
     @auth
     <section class="border-2 border-gray-400 mt-4 p-8">
         <div class="flex mb-4">
-            <img src="{{ asset('images/' . $authUser->icon_path) }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+            <img src="{{ Auth::user()->icon_path ?? asset('/images/user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+            {{-- <img src="{{ $authUser->icon_path }}" alt="アイコン" class="w-24 h-24 rounded-full" /> --}}
             <h3 class="text-2xl ml-4 mb-4">コメントする</h3>
         </div>
         <form method="POST" action="{{ route('comments.store', ['userName' => $article->user->name, 'articleId' => $article->id]) }}">
