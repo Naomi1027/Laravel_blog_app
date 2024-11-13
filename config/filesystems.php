@@ -36,13 +36,6 @@ return [
             'throw' => false,
         ],
 
-        // 'direct' => [
-        //     'driver' => 'local',
-        //     'root' => public_path('images'),  // 'images'ディレクトリを指定
-        //     'url' => env('APP_URL') . '/images',  // 正しいURLパスに修正
-        //     'visibility' => 'public',
-        // ],
-
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
