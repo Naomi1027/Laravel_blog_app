@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
         // icon_pathがない場合は、デフォルトのuser_default.pngをDBに保存、icon_pathがある場合は、その画像を保存
         if (request()->file('icon_path') === null) {
             // ファイルがない場合はデフォルト画像を使用
-            $iconPath = 'user_default.png';
+            $iconPath = null;
         } else {
             // AWSのS3のimagesディレクトリに保存
             $path = Storage::disk('s3')->put('/images', request()->file('icon_path'), 'public');
