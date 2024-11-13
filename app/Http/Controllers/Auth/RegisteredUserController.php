@@ -44,17 +44,10 @@ class RegisteredUserController extends Controller
             // ファイルがない場合はデフォルト画像を使用
             $iconPath = 'user_default.png';
         } else {
-            // ファイルがある場合、オリジナルのファイル名で保存
-            // request()->file('icon_path')->getClientOriginalName();
-            // request()->file('icon_path')->storeAs('public/images', $iconPath);
-            // Storage::disk('direct')->put($iconPath, file_get_contents(request()->file('icon_path')));
             // AWSのS3のimagesディレクトリに保存
             $path = Storage::disk('s3')->put('images', request()->file('icon_path'));
             // アップロードした画像のフルパスを取得
             $iconPath = Storage::url($path);
-
-            // $iconPath = Storage::disk('s3')->put('images', $path);
-            // Storage::disk('s3')->url($path);
         }
 
         $user = User::create([
