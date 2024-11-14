@@ -66,8 +66,11 @@
                 </div>
             </div>
             <p class="mb-6">{{ $article->content }}</p>
+            {{-- 投稿画像を表示 --}}
             @if ( $article->image )
-                <img src="{{ $article->image }}" alt="画像" class="w-2/3 h-96" />
+            <div class="flex justify-center mb-6">
+                <img src="{{ $article->image }}" alt="画像" class="w-full max-w-2xl h-auto rounded-lg shadow-md" />
+            </div>
             @endif
         </div>
     </article>
