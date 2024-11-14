@@ -66,6 +66,9 @@
                 </div>
             </div>
             <p class="mb-20">{{ $article->content }}</p>
+            @if ( $article->image )
+                <img src="{{ $article->image }}" alt="画像" class="w-96 h-96" />
+            @endif
         </div>
     </article>
     @foreach ( $article->comments as $comment )
