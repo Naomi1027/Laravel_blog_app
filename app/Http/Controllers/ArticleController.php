@@ -49,7 +49,13 @@ class ArticleController extends Controller
     public function store(StoreArticleRequest $request): RedirectResponse
     {
         $id = ['user_id' => Auth::id()];
-        $validated = $request->safe()->except(['tags']);
+        $validated = $request->safe()->except(['tags', 'image']);
+        if ($request->safe()->has('image')) {
+            $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
+            // 画像のフルパスを取得して、DBに保存
+            $imagePath= Storage::disk('s3')->url($path);
+            $article = Article::create(array_merge($id, $validated, ['image' => $imagePath]));
+        }
         $article = Article::create(array_merge($id, $validated));
 
         if ($request->safe()->has('tags')) {
@@ -57,8 +63,8 @@ class ArticleController extends Controller
         }
 
         // 画像がある場合は、S3に保存
-        if ($request->hasFile('image')) {
-            $path = Storage::disk('s3')->put('/images', $request()->file('image'), 'public');
+        if (request()->hasFile('image')) {
+            $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
             // 画像のフルパスを取得して、DBに保存
             $article->image = Storage::disk('s3')->url($path);
             $article->save();
