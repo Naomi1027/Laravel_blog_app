@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -53,6 +54,14 @@ class ArticleController extends Controller
 
         if ($request->safe()->has('tags')) {
             $article->tags()->attach($request->safe()['tags']);
+        }
+
+        // 画像がある場合は、S3に保存
+        if ($request->hasFile('image')) {
+            $path = Storage::disk('s3')->put('/images', $request()->file('image'), 'public');
+            // 画像のフルパスを取得して、DBに保存
+            $article->image = Storage::disk('s3')->url($path);
+            $article->save();
         }
 
         return redirect('/');
