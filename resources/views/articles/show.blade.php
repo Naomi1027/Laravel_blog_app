@@ -65,9 +65,11 @@
                     </div>
                 </div>
             </div>
-            <p class="mb-20">{{ $article->content }}</p>
+            <p class="mb-6">{{ $article->content }}</p>
+        </div>
+        <div>
             @if ( $article->image )
-                <img src="{{ $article->image }}" alt="画像" class="w-96 h-96" />
+                <img src="{{ $article->image }}" alt="画像" class="w-2/3 h-96" />
             @endif
         </div>
     </article>
