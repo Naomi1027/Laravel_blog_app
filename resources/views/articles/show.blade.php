@@ -66,8 +66,6 @@
                 </div>
             </div>
             <p class="mb-6">{{ $article->content }}</p>
-        </div>
-        <div>
             @if ( $article->image )
                 <img src="{{ $article->image }}" alt="画像" class="w-2/3 h-96" />
             @endif
