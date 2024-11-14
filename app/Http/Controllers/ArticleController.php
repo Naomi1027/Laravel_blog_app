@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -48,9 +49,18 @@ class ArticleController extends Controller
     public function store(StoreArticleRequest $request): RedirectResponse
     {
         $id = ['user_id' => Auth::id()];
-        $validated = $request->safe()->except(['tags']);
-        $article = Article::create(array_merge($id, $validated));
+        $validated = $request->safe()->except(['tags', 'image']);
 
+        // 画像がある場合
+        if ($request->safe()->has('image')) {
+            // AWSのS3のimagesディレクトリに保存
+            $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
+            // 画像のフルパスを取得して、DBに保存
+            $imagePath= Storage::disk('s3')->url($path);
+            $article = Article::create(array_merge($id, $validated, ['image' => $imagePath]));
+        } else {
+            $article = Article::create(array_merge($id, $validated));
+        }
         if ($request->safe()->has('tags')) {
             $article->tags()->attach($request->safe()['tags']);
         }

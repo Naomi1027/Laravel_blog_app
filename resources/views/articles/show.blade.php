@@ -65,7 +65,13 @@
                     </div>
                 </div>
             </div>
-            <p class="mb-20">{{ $article->content }}</p>
+            <p class="mb-6">{{ $article->content }}</p>
+            {{-- 投稿画像を表示 --}}
+            @if ( $article->image )
+            <div class="flex justify-center mb-6">
+                <img src="{{ $article->image }}" alt="画像" class="w-full max-w-2xl h-auto rounded-lg shadow-md" />
+            </div>
+            @endif
         </div>
     </article>
     @foreach ( $article->comments as $comment )

@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <div class="mt-20 mx-auto w-4/5">
-        <form method="POST" action="{{ route('articles.store') }}">
+        <form method="POST" action="{{ route('articles.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="w-full">
                 <div class="mb-6">
@@ -21,11 +21,17 @@
                                 <p class="text-red-700">{{ $message }}</p>
                         @enderror
                 </div>
-
                 <div class="mb-6">
                     <label for="content">本文</label>
-                    <textarea name="content" id="content" rows="15" class="w-full border-solid border-2 p-2 text-xl">{{ old('content') }}</textarea>
+                    <textarea name="content" id="content" rows="10" class="w-full border-solid border-2 p-2 text-xl">{{ old('content') }}</textarea>
                     @error('content')
+                        <p class="text-red-700">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="mb-6">
+                    <label for="image">画像</label>
+                    <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
+                    @error('image')
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
                 </div>
