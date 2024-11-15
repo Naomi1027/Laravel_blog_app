@@ -43,6 +43,8 @@ class StoreArticleRequest extends FormRequest
             'content.string' => '本文は文字列にして下さい。',
             'tags.max' => 'タグは:maxつまで選択して下さい',
             'image.file' => '画像はファイルにして下さい。',
+            'image.max' => '2MBを超えるファイルは添付できません。',
+            'image.mimes' => '指定のファイル形式以外は添付できません。',
         ];
     }
 }

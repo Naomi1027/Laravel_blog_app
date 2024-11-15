@@ -56,7 +56,7 @@ class ArticleController extends Controller
             // AWSのS3のimagesディレクトリに保存
             $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
             // 画像のフルパスを取得して、DBに保存
-            $imagePath= Storage::disk('s3')->url($path);
+            $imagePath = Storage::disk('s3')->url($path);
             $article = Article::create(array_merge($id, $validated, ['image' => $imagePath]));
         } else {
             $article = Article::create(array_merge($id, $validated));
