@@ -26,6 +26,7 @@ class UpdateArticleRequest extends FormRequest
             'content' => 'required|string',
             'tags' => 'nullable|array|max:3',
             'tags.*' => 'numeric|exists:tags,id',
+            'image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 
@@ -41,6 +42,9 @@ class UpdateArticleRequest extends FormRequest
             'content.required' => '本文は必須です。',
             'content.string' => '本文は文字列にして下さい。',
             'tags.max' => 'タグは:maxつまで選択して下さい',
+            'image.file' => '画像はファイルにして下さい。',
+            'image.max' => '2MBを超えるファイルは添付できません。',
+            'image.mimes' => '指定のファイル形式以外は添付できません。',
         ];
     }
 }
