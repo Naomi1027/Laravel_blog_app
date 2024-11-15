@@ -30,7 +30,7 @@
                 </div>
                 <div class="mb-6">
                     <label for="image">画像</label>
-                    <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
+                    <input type="file" id="image" name="image" value="{{ old('image', $article->title) }}" class="w-full border-solid border-2 p-2 text-xl">
                     <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
                     @error('image')
                         <p class="text-red-700">{{ $message }}</p>
