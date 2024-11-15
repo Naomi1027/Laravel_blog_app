@@ -56,7 +56,7 @@ class ArticleController extends Controller
             // AWSのS3のimagesディレクトリに保存
             $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
             // 画像のフルパスを取得して、DBに保存
-            $imagePath= Storage::disk('s3')->url($path);
+            $imagePath = Storage::disk('s3')->url($path);
             $article = Article::create(array_merge($id, $validated, ['image' => $imagePath]));
         } else {
             $article = Article::create(array_merge($id, $validated));
@@ -107,8 +107,17 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
-        $validated = $request->safe()->except(['tags']);
-        Article::where('id', $articleId)->update($validated);
+        $validated = $request->safe()->except(['tags', 'image']);
+
+        // 画像が更新された場合
+        if ($request->safe()->has('image')) {
+            // 画像がある場合、S3に保存
+            $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
+            $imagePath = Storage::disk('s3')->url($path);
+            $validated['image'] = $imagePath;
+
+            Article::where('id', $articleId)->update($validated);
+        }
         $article = Article::findOrFail($articleId);
 
         if ($request->safe()->has('tags')) {
