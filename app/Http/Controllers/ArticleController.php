@@ -56,7 +56,7 @@ class ArticleController extends Controller
         $article = new Article(array_merge($id, $validated));
 
         // 新しい画像がアップロードされた場合
-        if ($request->hasFile('image')) {
+        if ($request->file('image')) {
             // セッションに一時的な画像がある場合、古い一時画像を削除
             if (session()->has('temp_image')) {
                 $oldTempPath = session('temp_image');
