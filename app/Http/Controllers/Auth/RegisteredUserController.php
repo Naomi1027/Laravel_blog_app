@@ -36,7 +36,13 @@ class RegisteredUserController extends Controller
             'display_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'icon-path'=>['nullable', 'image'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults()
+                    ->mixedCase() // 大文字と小文字を含む
+                    ->numbers()   // 数字を含む],
+            ],
         ]);
 
         // icon_pathがない場合は、デフォルトのuser_default.pngをDBに保存、icon_pathがある場合は、その画像を保存
