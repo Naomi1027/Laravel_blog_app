@@ -34,7 +34,7 @@
                         @if ($article->image)
                             <img src="{{ $article->image }}" id="currentImage" alt="現在の画像" class="w-48 h-48 object-cover border mb-4">
                         @else
-                            <p class="text-gray-500">画像は設定されていません。</p>
+                            <p class="text-black-500">画像は設定されていません。</p>
                         @endif
                     </div>
                     <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
