@@ -16,6 +16,7 @@
                         <input type="checkbox" id="{{ $tagName }}" name="tags[]" value="{{ $tagId }}" @checked(is_array(old('tags')) && in_array($tagId, old('tags')))>
                         <label for="{{ $tagName }}" class="text-xl pr-2">{{ $tagName }}</label>
                     @endforeach
+                    <p id="tagError" class="text-red-700" style="display: none;">最大で3つまで選択できます。</p>
                     @error('tags')
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
