@@ -50,7 +50,7 @@ class StoreArticleRequest extends FormRequest
             $tempPath = Storage::disk('s3')->put('temp_images', $this->file('image'), 'public');
 
             // セッションに一時的な画像のパスを保存
-            session(['temp_image' => $tempPath]);
+            session()->flash('temp_image', $tempPath);
         }
 
         throw new HttpResponseException(
