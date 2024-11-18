@@ -7,7 +7,7 @@
                 <div class="mb-6">
                     <div class="w-40">
                         {{-- アイコン --}}
-                        @if ($article->user->icon_path === null)
+                        @if ($comment->user->icon_path === null)
                             <img src="{{ asset('/images/user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
                         @else
                             <img src="{{ $comment->user->icon_path }}" alt="アイコン" class="w-24 h-24 rounded-full" />
