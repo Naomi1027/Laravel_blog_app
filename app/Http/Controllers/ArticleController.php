@@ -134,7 +134,7 @@ class ArticleController extends Controller
                 Storage::disk('s3')->delete($oldPath);
             }
             // 新しい画像をS3に保存
-            $path = $request->file('image')->store('images', 's3');
+            $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
             $imagePath = Storage::disk('s3')->url($path);
             $article->image = $imagePath;
         }
