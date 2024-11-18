@@ -33,7 +33,7 @@ class StoreArticleRequest extends FormRequest
         ];
     }
 
-    protected function failedValidation(Validator $validator): void
+    protected function failedValidation(Validator $validator)
     {
         // 画像がアップロードされている場合
         if ($this->hasFile('image')) {
