@@ -73,7 +73,7 @@ class ArticleController extends Controller
         // 新しい画像がアップロードされた場合
         elseif ($request->hasFile('image')) {
             // AWSのS3のtemp_imagesディレクトリに一時保存
-            $tempPath = Storage::disk('s3')->put('temp_images', $request->file('image'), 'public');
+            $tempPath = Storage::disk('s3')->put('/images', $request->file('image'), 'public');
 
             // セッションに一時的な画像のパスを保存
             session(['temp_image' => $tempPath]);
