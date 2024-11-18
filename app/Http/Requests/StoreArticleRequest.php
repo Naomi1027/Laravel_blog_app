@@ -3,6 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Session;
 
 class StoreArticleRequest extends FormRequest
 {
@@ -28,6 +31,24 @@ class StoreArticleRequest extends FormRequest
             'tags.*' => 'numeric|exists:tags,id',
             'image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
+    }
+
+    protected function failedValidation(Validator $validator): void
+    {
+        // 画像がアップロードされている場合
+        if ($this->hasFile('image')) {
+            // 画像を一時的に保存
+            $path = $this->file('image')->store('temp_images');
+
+            // セッションに一時的な画像のパスを保存
+            Session::put('temp_image', $path);
+        }
+
+        throw new HttpResponseException(
+            redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+        );
     }
 
     /**
