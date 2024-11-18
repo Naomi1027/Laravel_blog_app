@@ -13,7 +13,7 @@
                 <div class="mb-6">
                     <p class="pr-8">タグの選択</p>
                     @foreach ($tags as $tagId => $tagName)
-                        <input type="checkbox" id="{{ $tagName }}" name="tags[]" value="{{ $tagId }}" @checked(is_array(old('tags')) && in_array($tagId, old('tags')))>
+                        <input type="checkbox" id="{{ $tagName }}" name="tags[]" value="{{ $tagId }}" class="tag-checkbox" @checked(is_array(old('tags')) && in_array($tagId, old('tags')))>
                         <label for="{{ $tagName }}" class="text-xl pr-2">{{ $tagName }}</label>
                     @endforeach
                     <p id="tagError" class="text-red-700" style="display: none;">最大で3つまで選択できます。</p>
