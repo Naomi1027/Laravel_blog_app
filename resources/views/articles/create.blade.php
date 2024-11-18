@@ -27,17 +27,6 @@
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
                 </div>
-                <div class="mb-6">
-                    <p class="pr-8">タグの選択</p>
-                    @foreach ($tags as $tagId => $tagName)
-                        <input type="checkbox" id="{{ $tagName }}" name="tags[]" value="{{ $tagId }}" class="tag-checkbox" @checked(is_array(old('tags')) && in_array($tagId, old('tags')))>
-                        <label for="{{ $tagName }}" class="text-xl pr-2">{{ $tagName }}</label>
-                    @endforeach
-                    <p id="tagError" class="text-red-700" style="display: none;">最大で3つまで選択できます。</p>
-                    @error('tags')
-                        <p class="text-red-700">{{ $message }}</p>
-                    @enderror
-                </div>
             </div>
             <div class="flex gap-12 justify-center">
                 <a href="{{ route('articles.index') }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
