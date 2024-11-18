@@ -31,7 +31,7 @@
                 <div class="mb-6">
                     <label for="image">画像</label>
                     <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
-                    {{ Form::file('image') }}
+                    {{-- {{ Form::file('image') }} --}}
                         @if ($errors->has('image'))
                         <p>{{ $errors->first('image') }}</p>
                         @elseif ($errors->any())
