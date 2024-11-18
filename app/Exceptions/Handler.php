@@ -6,7 +6,6 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
-use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
 
 class Handler extends ExceptionHandler
 {
@@ -50,31 +49,4 @@ class Handler extends ExceptionHandler
             }
         });
     }
-
-    protected function convertValidationExceptionToResponse($e, $request)
-    {
-        $url = $exception->redirectTo ?? url()->previous();
-
-        $inputs = $request->all();
-        foreach ($inputs as $key => $value) {
-            if (is_array($value)) {
-                $inputs[$key] = $this->removeFilesFromInput($value);
-            }
-
-            if ($value instanceof SymfonyUploadedFile) {
-                // 元ファイル名だけ返す
-                $inputs[$key] = basename($value->getClientOriginalName());
-            }
-        }
-
-        $e->response = redirect($url)
-            ->withInput($inputs)
-            ->withErrors(
-                $e->errors(),
-                $e->errorBag
-            );
-
-        return parent::convertValidationExceptionToResponse($e, $request);
-    }
-
 }
