@@ -30,15 +30,6 @@
                 </div>
                 <div class="mb-6">
                     <label for="image">画像</label>
-                    <div class="mb-4">
-                        @php
-                            $tempImagePath = Session::get('temp_image');
-                        @endphp
-                        @if ($tempImagePath)
-                            <img src="{{ asset('storage/' . $tempImagePath) }}" id="currentImage" alt="選択された画像" class="w-48 h-48 object-cover border mb-4">
-                            <p>この画像はフォーム送信時に選択されたものです。</p>
-                        @endif
-                    </div>
                     <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
                     <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
                     @error('image')

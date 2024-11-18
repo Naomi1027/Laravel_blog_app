@@ -53,65 +53,22 @@ class ArticleController extends Controller
         $id = ['user_id' => Auth::id()];
         $validated = $request->safe()->except(['tags', 'image']);
 
-        // 記事のインスタンスを作成
-        $article = new Article(array_merge($id, $validated));
-
-        // セッションに一時的な画像がある場合
-        if (Session::has('temp_image')) {
-            $tempPath = Session::get('temp_image');
-            $filename = basename($tempPath);
-            $fileContent = Storage::get($tempPath);
-
-            // S3に画像を保存
-            $s3Path = 'images/' . $filename;
-            Storage::disk('s3')->put($s3Path, $fileContent, 'public');
-
-            // 画像のURLを取得して記事に設定
-            $imagePath = Storage::disk('s3')->url($s3Path);
-            $article->image = $imagePath;
-
-            // 一時ファイルを削除
-            Storage::delete($tempPath);
-            Session::forget('temp_image');
-        }
-        // 新しい画像がアップロードされた場合
-        elseif ($request->hasFile('image')) {
-            $path = Storage::disk('s3')->put('/images', $request->file('image'), 'public');
+        // 画像がある場合
+        if ($request->safe()->has('image')) {
+            // AWSのS3のimagesディレクトリに保存
+            $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
+            // 画像のフルパスを取得して、DBに保存
             $imagePath = Storage::disk('s3')->url($path);
-            $article->image = $imagePath;
+            $article = Article::create(array_merge($id, $validated, ['image' => $imagePath]));
+        } else {
+            $article = Article::create(array_merge($id, $validated));
         }
-
-        $article->save();
-
-        // タグの処理
         if ($request->safe()->has('tags')) {
             $article->tags()->attach($request->safe()['tags']);
         }
 
         return redirect('/');
     }
-
-    // public function store(StoreArticleRequest $request): RedirectResponse
-    // {
-    //     $id = ['user_id' => Auth::id()];
-    //     $validated = $request->safe()->except(['tags', 'image']);
-
-    //     // 画像がある場合
-    //     if ($request->safe()->has('image')) {
-    //         // AWSのS3のimagesディレクトリに保存
-    //         $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
-    //         // 画像のフルパスを取得して、DBに保存
-    //         $imagePath = Storage::disk('s3')->url($path);
-    //         $article = Article::create(array_merge($id, $validated, ['image' => $imagePath]));
-    //     } else {
-    //         $article = Article::create(array_merge($id, $validated));
-    //     }
-    //     if ($request->safe()->has('tags')) {
-    //         $article->tags()->attach($request->safe()['tags']);
-    //     }
-
-    //     return redirect('/');
-    // }
 
     /**
      * Display the specified resource.
