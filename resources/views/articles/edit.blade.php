@@ -33,6 +33,11 @@
                     <div class="mb-4">
                         @if ($article->image)
                             <img src="{{ $article->image }}" id="currentImage" alt="現在の画像" class="w-48 h-48 object-cover border mb-4">
+                            <!-- 画像削除用のチェックボックスを追加 -->
+                            <div>
+                                <input type="checkbox" id="delete_image" name="delete_image" value="1">
+                                <label for="delete_image">画像を削除する</label>
+                            </div>
                         @else
                             <p class="text-black-500">画像は設定されていません。</p>
                         @endif
