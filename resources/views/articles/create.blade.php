@@ -27,6 +27,14 @@
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
                 </div>
+                <div class="mb-6">
+                    <label for="image">画像</label>
+                    <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
+                    <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
+                    @error('image')
+                        <p class="text-red-700">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
             <div class="flex gap-12 justify-center">
                 <a href="{{ route('articles.index') }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
