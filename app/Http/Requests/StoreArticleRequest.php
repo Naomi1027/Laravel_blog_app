@@ -34,22 +34,32 @@ class StoreArticleRequest extends FormRequest
     }
 
     protected function failedValidation(Validator $validator)
-{
-    // 画像がアップロードされている場合
-    if ($this->hasFile('image')) {
-        // 画像を一時的にS3に保存
-        $path = Storage::disk('s3')->put('temp_images', $this->file('image'), 'public');
+    {
+        // 既にセッションに一時的な画像がある場合、それを削除
+        if (session()->has('temp_image')) {
+            $oldTempPath = session('temp_image');
+            // S3から古い一時画像を削除
+            Storage::disk('s3')->delete($oldTempPath);
+            // セッションから削除
+            session()->forget('temp_image');
+        }
 
-        // セッションに一時的な画像のパスを保存
-        session(['temp_image' => $path]);
+        // 新しく画像がアップロードされている場合
+        if ($this->hasFile('image')) {
+            // 画像を一時的にS3に保存
+            $tempPath = Storage::disk('s3')->put('temp_images', $this->file('image'), 'public');
+
+            // セッションに一時的な画像のパスを保存
+            session(['temp_image' => $tempPath]);
+        }
+
+        throw new HttpResponseException(
+            redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+        );
     }
 
-    throw new HttpResponseException(
-        redirect()->back()
-            ->withErrors($validator)
-            ->withInput()
-    );
-}
 
     /**
      * @return array<string, string>

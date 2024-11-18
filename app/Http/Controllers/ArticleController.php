@@ -55,11 +55,25 @@ class ArticleController extends Controller
         // 記事のインスタンスを作成
         $article = new Article(array_merge($id, $validated));
 
+        // 新しい画像がアップロードされた場合
+        if ($request->hasFile('image')) {
+            // セッションに一時的な画像がある場合、古い一時画像を削除
+            if (session()->has('temp_image')) {
+                $oldTempPath = session('temp_image');
+                Storage::disk('s3')->delete($oldTempPath);
+                session()->forget('temp_image');
+            }
+
+            // 画像をS3に保存
+            $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
+            $imagePath = Storage::disk('s3')->url($path);
+            $article->image = $imagePath;
+        }
         // セッションに一時的な画像がある場合
-        if (session()->has('temp_image')) {
+        elseif (session()->has('temp_image')) {
             $tempPath = session('temp_image');
 
-            // S3上の一時ファイルを正式な画像ディレクトリに移動
+            // 一時ファイルを正式な画像ディレクトリに移動
             $newPath = 'images/' . basename($tempPath);
             Storage::disk('s3')->move($tempPath, $newPath);
 
@@ -70,19 +84,7 @@ class ArticleController extends Controller
             // セッションから一時的な画像パスを削除
             session()->forget('temp_image');
         }
-        // 新しい画像がアップロードされた場合
-        elseif ($request->hasFile('image')) {
-            // AWSのS3のtemp_imagesディレクトリに一時保存
-            $tempPath = Storage::disk('s3')->put('/images', $request->file('image'), 'public');
 
-            // セッションに一時的な画像のパスを保存
-            session(['temp_image' => $tempPath]);
-
-            // バリデーションエラー時はリダイレクトされるので、ここで処理を終了
-            // バリデーションエラーがない場合は、以下の処理に進む
-        }
-
-        // 記事を保存
         $article->save();
 
         if ($request->safe()->has('tags')) {
@@ -91,6 +93,7 @@ class ArticleController extends Controller
 
         return redirect('/');
     }
+
 
 
     // public function store(StoreArticleRequest $request): RedirectResponse
