@@ -3,6 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Storage;
 
 class StoreArticleRequest extends FormRequest
 {
@@ -29,6 +32,34 @@ class StoreArticleRequest extends FormRequest
             'image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
+
+    protected function failedValidation(Validator $validator)
+    {
+        // 既にセッションに一時的な画像がある場合、それを削除
+        if (session()->has('temp_image')) {
+            $oldTempPath = session('temp_image');
+            // S3から古い一時画像を削除
+            Storage::disk('s3')->delete($oldTempPath);
+            // セッションから削除
+            session()->forget('temp_image');
+        }
+
+        // 新しく画像がアップロードされている場合
+        if ($this->hasFile('image')) {
+            // 画像を一時的にS3に保存
+            $tempPath = Storage::disk('s3')->put('temp_images', $this->file('image'), 'public');
+
+            // セッションに一時的な画像のパスを保存
+            session(['temp_image' => $tempPath]);
+        }
+
+        throw new HttpResponseException(
+            redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+        );
+    }
+
 
     /**
      * @return array<string, string>

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 
+
 class ArticleController extends Controller
 {
     /**
@@ -51,22 +52,71 @@ class ArticleController extends Controller
         $id = ['user_id' => Auth::id()];
         $validated = $request->safe()->except(['tags', 'image']);
 
-        // 画像がある場合
-        if ($request->safe()->has('image')) {
-            // AWSのS3のimagesディレクトリに保存
-            $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
-            // 画像のフルパスを取得して、DBに保存
+        // 記事のインスタンスを作成
+        $article = new Article(array_merge($id, $validated));
+
+        // 新しい画像がアップロードされた場合
+        if ($request->file('image')) {
+            // セッションに一時的な画像がある場合、古い一時画像を削除
+            if (session()->has('temp_image')) {
+                $oldTempPath = session('temp_image');
+                Storage::disk('s3')->delete($oldTempPath);
+                session()->forget('temp_image');
+            }
+
+            // 画像をS3に保存
+            $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
             $imagePath = Storage::disk('s3')->url($path);
-            $article = Article::create(array_merge($id, $validated, ['image' => $imagePath]));
-        } else {
-            $article = Article::create(array_merge($id, $validated));
+            $article->image = $imagePath;
         }
+        // セッションに一時的な画像がある場合
+        elseif (session()->has('temp_image')) {
+            $tempPath = session('temp_image');
+
+            // 一時ファイルを正式な画像ディレクトリに移動
+            $newPath = 'images/' . basename($tempPath);
+            Storage::disk('s3')->move($tempPath, $newPath);
+
+            // 画像のURLを取得して記事に設定
+            $imagePath = Storage::disk('s3')->url($newPath);
+            $article->image = $imagePath;
+
+            // セッションから一時的な画像パスを削除
+            session()->forget('temp_image');
+        }
+
+        $article->save();
+
         if ($request->safe()->has('tags')) {
             $article->tags()->attach($request->safe()['tags']);
         }
 
         return redirect('/');
     }
+
+
+
+    // public function store(StoreArticleRequest $request): RedirectResponse
+    // {
+    //     $id = ['user_id' => Auth::id()];
+    //     $validated = $request->safe()->except(['tags', 'image']);
+
+    //     // 画像がある場合
+    //     if ($request->safe()->has('image')) {
+    //         // AWSのS3のimagesディレクトリに保存
+    //         $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
+    //         // 画像のフルパスを取得して、DBに保存
+    //         $imagePath = Storage::disk('s3')->url($path);
+    //         $article = Article::create(array_merge($id, $validated, ['image' => $imagePath]));
+    //     } else {
+    //         $article = Article::create(array_merge($id, $validated));
+    //     }
+    //     if ($request->safe()->has('tags')) {
+    //         $article->tags()->attach($request->safe()['tags']);
+    //     }
+
+    //     return redirect('/');
+    // }
 
     /**
      * Display the specified resource.
@@ -107,18 +157,42 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
-        $validated = $request->safe()->except(['tags', 'image']);
+        $validated = $request->safe()->except(['tags', 'image', 'delete_image']);
 
-        // 画像が更新された場合
-        if ($request->safe()->has('image')) {
-            // 画像がある場合、S3に保存
+        $article = Article::findOrFail($articleId);
+
+        // 画像削除の処理
+        if ($request->has('delete_image') && $request->input('delete_image') == 1) {
+            // S3から画像を削除
+            if ($article->image) {
+                // 画像のパスを取得
+                $path = parse_url($article->image, PHP_URL_PATH);
+                $path = ltrim($path, '/');
+                // S3から削除
+                Storage::disk('s3')->delete($path);
+                // データベースの画像パスをnullに設定
+                $article->image = null;
+            }
+        }
+
+        // 新しい画像がアップロードされた場合
+        if ($request->hasFile('image')) {
+            // 既存の画像を削除
+            if ($article->image) {
+                $oldPath = parse_url($article->image, PHP_URL_PATH);
+                $oldPath = ltrim($oldPath, '/');
+                Storage::disk('s3')->delete($oldPath);
+            }
+            // 新しい画像をS3に保存
             $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
             $imagePath = Storage::disk('s3')->url($path);
-            $validated['image'] = $imagePath;
-
-            Article::where('id', $articleId)->update($validated);
+            $article->image = $imagePath;
         }
-        $article = Article::findOrFail($articleId);
+
+        // その他のフィールドを更新
+        $article->fill($validated);
+        $article->save();
+
 
         if ($request->safe()->has('tags')) {
             $article->tags()->sync($request->safe()['tags']);
