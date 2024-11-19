@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 
 // こっちはGOOGLE_REDIRECT_URLと合わせること
-Route::get('/auth/v1/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::get('https://fdtctvhzsqkvtxcijmjt.supabase.co/auth/v1/callback', [LoginController::class, 'handleGoogleCallback']);
 
 
 require __DIR__.'/auth.php';
