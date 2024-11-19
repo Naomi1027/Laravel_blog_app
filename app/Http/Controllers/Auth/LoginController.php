@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
-use Illuminate\Support\Str;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -17,19 +18,23 @@ class LoginController extends Controller
 
     public function handleGoogleCallback()
     {
+        try {
         $googleUser = Socialite::driver('google')->stateless()->user();
 
         $user = User::updateOrCreate([
             'email' => $googleUser->getEmail(),
         ], [
             'name' => $googleUser->getName(),
-            'email' => $googleUser->getEmail(),
+            'email_verified_at' => now(),
         ]);
 
         // ユーザーをログインさせる
         Auth::login($user, true);
 
-        // ホームページへリダイレクト
-        return redirect()->route('articles.index');
+        return redirect()->intended('dashboard');
+        } catch (Exception $e) {
+            Log::error($e);
+            throw $e;
+        }
     }
 }
