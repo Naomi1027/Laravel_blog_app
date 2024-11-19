@@ -29,16 +29,6 @@
             "dest": "/api/index.php"
         }
     ],
-    "rewrites": [
-        {
-            "source": "/.well-known/vercel/microfrontend-routing",
-            "destination": "/index.php"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "/index.php"
-        }
-    ],
     "env": {
         "APP_ENV": "production",
         "APP_NAME": "Laravel Vercel",

@@ -20,6 +20,7 @@ class LoginController extends Controller
     {
         try {
             $user = Socialite::driver("google")->user();
+            Log::info('Google user data:', (array)$user);
             $findUser = User::where("google_id", $user->id)->first();
 
             if ($findUser) {
@@ -38,8 +39,8 @@ class LoginController extends Controller
                 return redirect()->intended("dashboard");
             }
         } catch (Exception $e) {
-            Log::error($e);
-            throw $e->getMessage();
+            Log::error('Google login error: ' . $e->getMessage());
+    return redirect('/login')->with('error', 'ログイン中に問題が発生しました。再度お試しください。');
         }
     }
 }
