@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Facades\Http;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -15,29 +15,28 @@ class LoginController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-    public function handleCallback(Request $request)
+    public function handleGoogleCallback()
     {
-        try {
-            $user = Socialite::driver('google')->user();
-            $accessToken = $user->token;
-
-            // Supabaseにユーザー情報を登録
-            $response = Http::withHeaders([
-                'apikey' => env('SUPABASE_ANON_KEY'),
-                'Authorization' => 'Bearer ' . $accessToken,
-            ])->post(env('SUPABASE_URL') . '/auth/v1/signup', [
-                'email' => $user->email,
-                'password' => uniqid(), // Supabaseはパスワードを必要とする
-            ]);
-
-            if ($response->successful()) {
-                return redirect()->route('dashboard');
-            } else {
-                return redirect('/login')->with('error', 'Supabase認証に失敗しました。');
-            }
-        } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Google認証に失敗しました。');
+        $googleUser = Socialite::driver('google')->stateless()->user();
+        // email が合致するユーザーを取得
+        $user = User::where('email', $googleUser->email)->first();
+        // 見つからなければ新しくユーザーを作成
+        if ($user == null) {
+            $user = $this->createUserByGoogle($googleUser);
         }
+        // ログイン処理
+        Auth::login($user, true);
+        return redirect('/dashboard');
+    }
+
+    public function createUserByGoogle($googleUser)
+    {
+        $user = User::create([
+            'name' => $googleUser->name,
+            'email' => $googleUser->email,
+            'email_verified_at' => now(),
+        ]);
+        return redirect('/dashboard');
     }
 }
 
