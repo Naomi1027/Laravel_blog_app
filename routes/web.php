@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ここのurlは任意
+// Googleログインのリダイレクト用ルート
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 
 // こっちはGOOGLE_REDIRECT_URLと合わせること

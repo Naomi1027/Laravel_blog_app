@@ -29,6 +29,11 @@
             "dest": "/api/index.php"
         }
     ],
+    "rewrites": [
+        { "source": "/auth/google", "destination": "/index.php" },
+        { "source": "/auth/google/callback", "destination": "/index.php" },
+        { "source": "/(.*)", "destination": "/api/index.php" }
+    ],
     "env": {
         "APP_ENV": "production",
         "APP_NAME": "Laravel Vercel",

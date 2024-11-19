@@ -11,11 +11,10 @@ use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
+    // Googleログインページへリダイレクト
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')
-        ->scopes(['openid', 'profile', 'email'])
-        ->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
     public function handleGoogleCallback()
