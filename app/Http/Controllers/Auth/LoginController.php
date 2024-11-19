@@ -19,29 +19,24 @@ class LoginController extends Controller
 
     public function handleGoogleCallback()
     {
-        try {
             $user = Socialite::driver("google")->user();
-            Log::info('Google user data:', (array)$user);
             $findUser = User::where("google_id", $user->id)->first();
 
             if ($findUser) {
                 Auth::login($findUser);
-                return redirect()->intended("dashboard");
+                return redirect()->route('dashboard');
             } else {
                 $newUser = User::create([
-                    "name" => $user->name,
-                    "email" => $user->email,
-                    "google_id" => $user->id,
-                    "email_verified_at" => now(),
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'google_id' => $user->id,
+                    'email_verified_at' => now(),
                 ]);
 
                 Auth::login($newUser);
 
-                return redirect()->intended("dashboard");
+                return redirect()->route('dashboard');
             }
-        } catch (Exception $e) {
-            Log::error('Google login error: ' . $e->getMessage());
     return redirect('/login')->with('error', 'ログイン中に問題が発生しました。再度お試しください。');
-        }
     }
 }
