@@ -23,20 +23,19 @@ class LoginController extends Controller
         // デバッグ用: $userをレスポンスで返す
         return response()->json(['user' => $user]);
 
-        $findUser = User::where("google_id", $user->id)->first();
+        $findUser = User::where('email', $user->email)->first();
 
-        if ($findUser) {
-            Auth::login($findUser);
-            return redirect()->route('dashboard');
-        } else {
+        if ($findUser === null) {
             $newUser = User::create([
                 'name' => $user->name,
                 'email' => $user->email,
                 'google_id' => $user->id,
                 'email_verified_at' => now(),
             ]);
-
             Auth::login($newUser);
+            return redirect()->route('dashboard');
+        } else {
+            Auth::login($findUser);
 
             return redirect()->route('dashboard');
         }

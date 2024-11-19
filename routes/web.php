@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
 // Googleログインのリダイレクト用ルート
 Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 
-// こっちはGOOGLE_REDIRECT_URLと合わせること
+// GOOGLE_REDIRECT_URLと合わせること
 Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
 
