@@ -30,6 +30,6 @@ class LoginController extends Controller
         Auth::login($user, true);
 
         // ホームページへリダイレクト
-        return redirect('/dashboard');
+        return redirect()->route('articles.index');
     }
 }
