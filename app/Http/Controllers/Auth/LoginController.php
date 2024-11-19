@@ -16,32 +16,25 @@ class LoginController extends Controller
     }
 
     public function handleGoogleCallback()
-{
-    try {
+    {
         $user = Socialite::driver('google')->user();
 
-        // デバッグ用: $userをレスポンスで返す
-        return response()->json(['user' => $user]);
+        $findUser = User::where('google_id', $user->id)->first();
 
-        $findUser = User::where('email', $user->email)->first();
-
-        if ($findUser === null) {
+        if ($findUser) {
+            Auth::login($findUser);
+            return redirect()->route('dashboard');
+        } else {
             $newUser = User::create([
                 'name' => $user->name,
                 'email' => $user->email,
                 'google_id' => $user->id,
                 'email_verified_at' => now(),
             ]);
+
             Auth::login($newUser);
-            return redirect()->route('dashboard');
-        } else {
-            Auth::login($findUser);
 
             return redirect()->route('dashboard');
         }
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()]);
     }
-}
-
 }
