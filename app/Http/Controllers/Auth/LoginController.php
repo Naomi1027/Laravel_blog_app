@@ -16,26 +16,33 @@ class LoginController extends Controller
     }
 
     public function handleGoogleCallback()
-    {
-            $user = Socialite::driver('google')->user();
-            dd($user);
-            $findUser = User::where('google_id', $user->id)->first();
+{
+    try {
+        $user = Socialite::driver('google')->user();
 
-            if ($findUser) {
-                Auth::login($findUser);
-                return redirect()->route('dashboard');
-            } else {
-                $newUser = User::create([
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'google_id' => $user->id,
-                    'email_verified_at' => now(),
-                ]);
+        // デバッグ用: $userをレスポンスで返す
+        return response()->json(['user' => $user]);
 
-                Auth::login($newUser);
+        $findUser = User::where("google_id", $user->id)->first();
 
-                return redirect()->route('dashboard');
-            }
-        return redirect('/login')->with('error', 'ログイン中に問題が発生しました。再度お試しください。');
+        if ($findUser) {
+            Auth::login($findUser);
+            return redirect()->route('dashboard');
+        } else {
+            $newUser = User::create([
+                'name' => $user->name,
+                'email' => $user->email,
+                'google_id' => $user->id,
+                'email_verified_at' => now(),
+            ]);
+
+            Auth::login($newUser);
+
+            return redirect()->route('dashboard');
+        }
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
     }
+}
+
 }
