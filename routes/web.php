@@ -45,10 +45,10 @@ Route::middleware('auth')->group(function () {
 });
 
 // ここのurlは任意
-Route::get('auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('auth.google');
 
 // こっちはGOOGLE_REDIRECT_URLと合わせること
-Route::get('auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
+Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
 
 require __DIR__.'/auth.php';
