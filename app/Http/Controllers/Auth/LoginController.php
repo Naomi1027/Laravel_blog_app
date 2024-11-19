@@ -16,27 +16,33 @@ class LoginController extends Controller
     }
 
     public function handleGoogleCallback()
-    {
-        $googleUser = Socialite::driver('google')->stateless()->user();
-        // email が合致するユーザーを取得
-        $user = User::where('email', $googleUser->email)->first();
-        // 見つからなければ新しくユーザーを作成
-        if ($user == null) {
-            $user = $this->createUserByGoogle($googleUser);
-        }
-        // ログイン処理
-        Auth::login($user, true);
-        return redirect('/dashboard');
-    }
+{
+    try {
+        $user = Socialite::driver('google')->user();
 
-    public function createUserByGoogle($googleUser)
-    {
-        $user = User::create([
-            'name' => $googleUser->name,
-            'email' => $googleUser->email,
-            'email_verified_at' => now(),
-        ]);
-        return redirect('/dashboard');
+        // デバッグ用: $userをレスポンスで返す
+        return response()->json(['user' => $user]);
+
+        $findUser = User::where("google_id", $user->id)->first();
+
+        if ($findUser) {
+            Auth::login($findUser);
+            return redirect()->route('dashboard');
+        } else {
+            $newUser = User::create([
+                'name' => $user->name,
+                'email' => $user->email,
+                'google_id' => $user->id,
+                'email_verified_at' => now(),
+            ]);
+
+            Auth::login($newUser);
+
+            return redirect()->route('dashboard');
+        }
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
     }
 }
 
+}
