@@ -23,7 +23,7 @@ class LoginController extends Controller
 
         if ($findUser) {
             Auth::login($findUser);
-            return redirect()->route('dashboard');
+            return redirect('/dashboard');
         } else {
             $newUser = User::create([
                 'name' => $user->name,
@@ -34,7 +34,7 @@ class LoginController extends Controller
 
             Auth::login($newUser);
 
-            return redirect()->route('dashboard');
+            return redirect('/dashboard');
         }
     }
 }
