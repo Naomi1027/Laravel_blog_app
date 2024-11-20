@@ -29,6 +29,7 @@ class LoginController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'google_id' => $user->id,
+                'email_verified_at' => now(),
             ]);
 
             Auth::login($newUser);
