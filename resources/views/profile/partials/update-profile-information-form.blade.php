@@ -47,6 +47,20 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="display_name" :value="__('ニックネーム')" />
+            <x-text-input id="display_name" name="display_name" type="text" class="mt-1 block w-full" :value="old('display_name', $user->display_name)" required autofocus autocomplete="display_name" />
+            <x-input-error class="mt-2" :messages="$errors->get('display_name')" />
+        </div>
+
+        <div>
+            <x-input-label for="icon_path" :value="__('アイコン')" />
+            <div class="col-md-6">
+                <input id="icon_path" type="file" name="icon_path">
+                <x-input-error class="mt-2" :messages="$errors->get('icon_path')" />
+            </div>
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
