@@ -17,7 +17,7 @@ class LoginController extends Controller
 
     public function handleGoogleCallback()
     {
-        $user = Socialite::driver('google')->user();
+        $user = Socialite::driver('google')->stateless()->user();
 
         $findUser = User::where('google_id', $user->id)->first();
 
@@ -29,7 +29,6 @@ class LoginController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'google_id' => $user->id,
-                'email_verified_at' => now(),
             ]);
 
             Auth::login($newUser);
