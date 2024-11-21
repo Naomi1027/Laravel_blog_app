@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" id="articleForm"class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
@@ -75,4 +75,23 @@
             @endif
         </div>
     </form>
+    <script>
+        // ファイルサイズ検証スクリプト
+        document.getElementById('articleForm').addEventListener('submit', function(event) {
+            const fileInput = document.getElementById('icon_path');
+            const fileError = document.getElementById('fileError');
+            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+
+            // ファイルが選択されている場合のみ検証
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.size > maxSize) {
+                    event.preventDefault(); // フォーム送信をキャンセル
+                    fileError.style.display = 'block'; // エラーメッセージを表示
+                } else {
+                    fileError.style.display = 'none'; // エラーメッセージを非表示
+                }
+            }
+        });
+    </script>
 </section>
