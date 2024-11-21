@@ -57,6 +57,7 @@
             <x-input-label for="icon_path" :value="__('アイコン')" />
             <div class="col-md-6">
                 <input id="icon_path" type="file" name="icon_path" accept="image/*">
+                <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
                 <x-input-error class="mt-2" :messages="$errors->get('icon_path')" />
             </div>
         </div>
