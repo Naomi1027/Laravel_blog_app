@@ -27,15 +27,10 @@
         <div class="mt-4">
             <x-input-label for="icon_path" :value="__('アイコン')" />
             <div class="col-md-6">
-                <input id="icon_path" type="file" name="icon_path" class="@error('icon_path') is-invalid @enderror">
-                @error('icon_path')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
+                <input id="icon_path" type="file" name="icon_path" accept="image/*">
+                <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
+                <x-input-error class="mt-2" :messages="$errors->get('icon_path')" />
             </div>
-            {{-- <x-text-input id="icon" class="col-md-4 col-form-label text-md-right" type="icon" name="icon" :value="old('icon')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('icon')" class="mt-2" /> --}}
         </div>
 
         <!-- Password -->

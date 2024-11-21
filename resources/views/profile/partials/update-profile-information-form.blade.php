@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" id="articleForm" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
@@ -47,6 +47,33 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="display_name" :value="__('ニックネーム')" />
+            <x-text-input id="display_name" name="display_name" type="text" class="mt-1 block w-full" :value="old('display_name', $user->display_name)" autofocus autocomplete="display_name" />
+            <x-input-error class="mt-2" :messages="$errors->get('display_name')" />
+        </div>
+
+        <div>
+            <x-input-label for="icon_path" :value="__('アイコン')" />
+            <div class="col-md-6">
+                <input id="icon_path" type="file" name="icon_path" class="mt-1 block w-full">
+                <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
+
+                <!-- 既存のアイコンを表示 -->
+                <div class="mt-3">
+                    <img id="previewImage"
+                        src="{{ $user->icon_path ? $user->icon_path : asset('/images/user_default.png') }}"
+                        alt="アイコン"
+                        class="w-24 h-24 rounded-full">
+                    <p id="existingIconMessage" class="text-gray-600 text-sm">
+                        {{ $user->icon_path ? '現在設定されているアイコンです。' : 'デフォルトアイコンが設定されています。' }}
+                    </p>
+                </div>
+
+                <x-input-error class="mt-2" :messages="$errors->get('icon_path')" />
+            </div>
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
@@ -61,4 +88,43 @@
             @endif
         </div>
     </form>
+
+    <script>
+        // ファイルサイズ検証スクリプトとプレビュー表示
+        document.getElementById('icon_path').addEventListener('change', function(event) {
+            const fileInput = event.target;
+            const fileError = document.getElementById('fileError');
+            const previewImage = document.getElementById('previewImage');
+            const existingIconMessage = document.getElementById('existingIconMessage');
+            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+
+            // ファイルが選択されている場合のみ検証
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+
+                // ファイルサイズの検証
+                if (file.size > maxSize) {
+                    fileError.style.display = 'block'; // エラーメッセージを表示
+                    fileInput.value = ''; // 入力をクリア
+                    previewImage.style.display = 'none'; // プレビューを非表示
+                    existingIconMessage.style.display = 'none'; // メッセージを非表示
+                } else {
+                    fileError.style.display = 'none'; // エラーメッセージを非表示
+
+                    // プレビュー表示
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewImage.style.display = 'block';
+                        existingIconMessage.textContent = '新しいアイコンが選択されました。'; // メッセージを変更
+                        existingIconMessage.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                previewImage.style.display = 'none'; // ファイルが選択されていない場合はプレビューを非表示
+                existingIconMessage.style.display = 'none'; // メッセージを非表示
+            }
+        });
+    </script>
 </section>
