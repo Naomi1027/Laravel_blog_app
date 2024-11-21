@@ -27,18 +27,23 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        // フォームに入力された値を取得
         $updateUser = $request->user()->fill($request->validated());
 
+        // icon_pathの入力がない場合はアイコンの更新は行わない、icon_pathがある場合は、その画像をS3に上書き保存する
         if (!is_null($updateUser->icon_path)) {
-            $path = Storage::disk('s3')->put('/images', $updateUser->icon_path, 'public');
-            $updateUser->icon_path = Storage::disk('s3')->url($path);
+            $oldPath = str_replace(Storage::disk('s3')->url('/'), '', $updateUser->icon_path);
+            Storage::disk('s3')->delete($oldPath); // S3から削除
         }
+        // 新しい画像をS3にアップロードしてパスを保存
+        $path = Storage::disk('s3')->put('/images', $request->file('icon_path'), 'public');
+        $updateUser->icon_path = Storage::disk('s3')->url($path);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $updateUser->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
