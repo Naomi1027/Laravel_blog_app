@@ -56,12 +56,8 @@
         <div>
             <x-input-label for="icon_path" :value="__('アイコン')" />
             <div class="col-md-6">
-                <input id="icon_path" type="file" name="icon_path" class="@error('icon_path') is-invalid @enderror">
-                @error('icon_path')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
+                <input id="icon_path" type="file" name="icon_path" accept="image/*">
+                <x-input-error class="mt-2" :messages="$errors->get('icon_path')" />
             </div>
         </div>
 
