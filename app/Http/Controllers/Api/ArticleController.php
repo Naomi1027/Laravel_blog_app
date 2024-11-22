@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreArticleRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -82,9 +84,9 @@ class ArticleController extends Controller
      * 記事を削除するFunction
      *
      * @param int $articleId
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy(int $articleId): Response
+    public function destroy(int $articleId): JsonResponse
     {
         // 記事IDに紐づく記事を取得
         $article = Article::find($articleId);

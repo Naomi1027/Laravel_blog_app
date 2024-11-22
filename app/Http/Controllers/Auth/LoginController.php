@@ -3,26 +3,30 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
 
 class LoginController extends Controller
 {
     // Googleログインページへリダイレクト
-    public function redirectToGoogle()
+    public function redirectToGoogle(): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         return Socialite::driver('google')->redirect();
     }
 
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(): \Illuminate\Http\RedirectResponse
     {
-        $user = Socialite::driver('google')->stateless()->user();
+        /** @var \Laravel\Socialite\Two\GoogleProvider $$driver */
+        $driver = Socialite::driver('google');
+        /** @var User $user */
+        $user = $driver->stateless()->user();
 
         $findUser = User::where('google_id', $user->id)->first();
 
         if ($findUser) {
             Auth::login($findUser);
+
             return redirect('/dashboard');
         } else {
             $newUser = User::create([

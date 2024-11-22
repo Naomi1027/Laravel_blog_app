@@ -10,9 +10,8 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\View\View;
 
 class ArticleController extends Controller
 {
@@ -168,7 +167,6 @@ class ArticleController extends Controller
         // その他のフィールドを更新
         $article->fill($validated);
         $article->save();
-
 
         if ($request->safe()->has('tags')) {
             $article->tags()->sync($request->safe()['tags']);

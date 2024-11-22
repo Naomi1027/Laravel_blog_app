@@ -10,9 +10,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Storage;
 
 class RegisteredUserController extends Controller
 {
@@ -35,13 +35,13 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'display_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'icon-path'=>['nullable', 'image'],
+            'icon-path' => ['nullable', 'image'],
             'password' => [
                 'required',
                 'confirmed',
                 Rules\Password::defaults()
                     ->mixedCase() // 大文字と小文字を含む
-                    ->numbers()   // 数字を含む],
+                    ->numbers(),   // 数字を含む],
             ],
         ]);
 
