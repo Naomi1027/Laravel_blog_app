@@ -40,3 +40,4 @@ make init
 - https://www.naomoto27.net
 - AWS S3 
 
+- CodeRabbitを導入しました
