@@ -9,6 +9,8 @@ use App\Models\Article;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {
@@ -82,9 +84,9 @@ class ArticleController extends Controller
      * 記事を削除するFunction
      *
      * @param int $articleId
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy(int $articleId): Response
+    public function destroy(int $articleId): JsonResponse
     {
         // 記事IDに紐づく記事を取得
         $article = Article::find($articleId);
