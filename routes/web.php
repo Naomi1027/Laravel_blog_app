@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +49,5 @@ Route::get('/auth/google', [LoginController::class, 'redirectToGoogle'])->name('
 
 // こっちはGOOGLE_REDIRECT_URLと合わせること
 Route::get('/auth/google/callback', [LoginController::class, 'handleGoogleCallback']);
-
 
 require __DIR__.'/auth.php';

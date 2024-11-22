@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -23,6 +23,7 @@ class LoginController extends Controller
 
         if ($findUser) {
             Auth::login($findUser);
+
             return redirect('/dashboard');
         } else {
             $newUser = User::create([
