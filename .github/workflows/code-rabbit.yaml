@@ -19,7 +19,14 @@ concurrency:
 jobs:
   review:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
+      - name: シークレットの存在確認
+        run: |
+          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
+            echo "Error: OPENAI_API_KEY is not set"
+            exit 1
+          fi
       - uses: coderabbitai/ai-pr-reviewer@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,3 +35,7 @@ jobs:
           debug: false
           review_simple_changes: false
           review_comment_lgtm: false
+        continue-on-error: true
+        retry:
+          max_attempts: 2
+          wait_seconds: 10
