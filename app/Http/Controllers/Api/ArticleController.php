@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreArticleRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 
 class ArticleController extends Controller
 {

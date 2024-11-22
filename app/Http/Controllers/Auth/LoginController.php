@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
+
 class LoginController extends Controller
 {
     // Googleログインページへリダイレクト
@@ -16,7 +17,7 @@ class LoginController extends Controller
 
     public function handleGoogleCallback(): \Illuminate\Http\RedirectResponse
     {
-        /** @var \Laravel\Socialite\Two\GoogleProvider $$driver  */
+        /** @var \Laravel\Socialite\Two\GoogleProvider $$driver */
         $driver = Socialite::driver('google');
         /** @var User $user */
         $user = $driver->stateless()->user();
