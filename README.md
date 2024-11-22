@@ -1,5 +1,4 @@
-# BackendTrainingBase
-ノマドリバックエンド研修のためのベースリポジトリ
+# Laravelを使ったブログアプリ
 
 ## スタック
 ```
@@ -35,3 +34,9 @@ make init
 ```
 
 3. その他便利コマンドはMakefile参照
+
+## 本番環境
+### URL
+- https://www.naomoto27.net
+- AWS S3 
+
