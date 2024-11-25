@@ -3,13 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
+use App\Filament\Resources\TagResource\RelationManagers\ArticlesRelationManager;
 use App\Models\Tag;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use App\Filament\Resources\TagResource\RelationManagers\ArticlesRelationManager;
 
 class TagResource extends Resource
 {
