@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use App\Filament\Resources\TagResource\RelationManagers\ArticlesRelationManager;
 
 class TagResource extends Resource
 {
@@ -21,9 +22,11 @@ class TagResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')->required()->label('タグ')
-                    ->hint('タグ名を入力'),
+                    ->hint('タグ名を入力')
+                    ->maxLength(50),
                 Forms\Components\TextInput::make('key')->required()->label('キー')
-                    ->hint('キーを入力'),
+                    ->hint('キーを入力')
+                    ->maxLength(50),
             ]);
     }
 
@@ -50,7 +53,7 @@ class TagResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ArticlesRelationManager::class,
         ];
     }
 
