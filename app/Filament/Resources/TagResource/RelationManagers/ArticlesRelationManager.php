@@ -32,17 +32,8 @@ class ArticlesRelationManager extends RelationManager
             ->filters([
                 //
             ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->headerActions([]) // 新規作成ボタンを削除
+            ->actions([]) // 各行の編集・削除ボタンを削除
+            ->bulkActions([]); // 一括削除などのアクションを削除
     }
 }
