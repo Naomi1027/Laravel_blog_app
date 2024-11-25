@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
-use App\Filament\Resources\TagResource\RelationManagers;
 use App\Models\Tag;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TagResource extends Resource
 {
@@ -24,9 +21,9 @@ class TagResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')->required()->label('タグ')
-                ->hint("タグ名を入力"),
+                    ->hint('タグ名を入力'),
                 Forms\Components\TextInput::make('key')->required()->label('キー')
-                ->hint("キーを入力"),
+                    ->hint('キーを入力'),
             ]);
     }
 
