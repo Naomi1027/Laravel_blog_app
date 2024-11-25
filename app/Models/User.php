@@ -11,8 +11,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use Laravel\Sanctum\HasApiTokens;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
@@ -81,5 +83,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function routeNotificationForSlack(Notification $notification): ?string
     {
         return config('services.slack.notifications.channel');
+    }
+
+    // admin用のログインができるかどうかを判定するメソッド
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return str_ends_with($this->email, '@naomoto27.net') && $this->hasVerifiedEmail();
     }
 }
