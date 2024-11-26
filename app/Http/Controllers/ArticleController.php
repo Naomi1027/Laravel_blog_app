@@ -58,7 +58,7 @@ class ArticleController extends Controller
     if ($request->file('image')) {
         // 画像をS3に保存
         $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
-        $imagePath = str_replace('/storage', '/images', Storage::url($path));
+        $imagePath = Storage::url($path);
         $article->image = $imagePath;
     }
 
