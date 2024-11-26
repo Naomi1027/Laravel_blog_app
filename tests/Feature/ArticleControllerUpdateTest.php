@@ -366,7 +366,7 @@ class ArticleControllerUpdateTest extends TestCase
      *
      * @return void
      */
-    public function 存在しない記事IDを指定した場合404エラーが返ること(): void
+    public function 存在しない記事_i_dを指定した場合404エラーが返ること(): void
     {
         $tags = Tag::take(3)->get();
         // 記事を投稿
