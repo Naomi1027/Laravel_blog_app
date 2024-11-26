@@ -56,22 +56,43 @@ class ArticleController extends Controller
 
         // 新しい画像がアップロードされた場合
         if ($request->file('image')) {
+            // セッションに一時的な画像がある場合、古い一時画像を削除
+            if (session()->has('temp_image')) {
+                $oldTempPath = session('temp_image');
+                Storage::disk('s3')->delete($oldTempPath);
+                session()->forget('temp_image');
+            }
+
             // 画像をS3に保存
             $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
             $imagePath = Storage::disk('s3')->url($path);
             $article->image = $imagePath;
         }
+        // セッションに一時的な画像がある場合
+        elseif (session()->has('temp_image')) {
+            $tempPath = session('temp_image');
 
-        // 記事を保存
+            // 一時ファイルを正式な画像ディレクトリに移動
+            $newPath = 'images/' . basename($tempPath);
+            Storage::disk('s3')->move($tempPath, $newPath);
+
+            // 画像のURLを取得して記事に設定
+            $imagePath = Storage::disk('s3')->url($newPath);
+            $article->image = $imagePath;
+
+            // セッションから一時的な画像パスを削除
+            session()->forget('temp_image');
+        }
+
         $article->save();
 
-        // タグを関連付け
         if ($request->safe()->has('tags')) {
             $article->tags()->attach($request->safe()['tags']);
         }
 
         return redirect('/');
     }
+
     /**
      * Display the specified resource.
      */
