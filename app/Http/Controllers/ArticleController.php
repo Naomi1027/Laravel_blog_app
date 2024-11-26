@@ -58,8 +58,7 @@ class ArticleController extends Controller
         if ($request->safe()->only(['image'])) {
             // 画像をS3に保存
             $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
-            $imagePath = str_replace('/storage/', '/', Storage::url($path));
-            $article->image = $imagePath;
+            $article->image = $path;
         }
 
         // 記事を保存
@@ -140,8 +139,7 @@ class ArticleController extends Controller
             }
             // 新しい画像をS3に保存
             $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
-            $imagePath = str_replace('/storage/', '/', Storage::url($path));
-            $article->image = $imagePath;
+            $article->image = $path;
         }
 
         // その他のフィールドを更新
