@@ -31,16 +31,13 @@
                 <div class="mb-6">
                     <label for="image">画像</label>
                     <div class="mb-4">
-                        @php
-                            $tempImagePath = session('temp_image');
-                        @endphp
-                        @if ($tempImagePath)
-                            <img src="{{ Storage::disk('s3')->url($tempImagePath) }}" id="currentImage" alt="選択された画像" class="w-48 h-48 object-cover border mb-4">
-                            <p>選択された画像です。</p>
-                        @endif
+                        <!-- プレビュー用画像の要素 -->
+                        <img id="currentImage" src="{{ old('image_preview') }}" alt="選択された画像" class="w-48 h-48 object-cover border mb-4" style="display: {{ old('image_preview') ? 'block' : 'none' }};">
+                        <p id="imageMessage" style="display: {{ old('image_preview') ? 'block' : 'none' }};">選択された画像です。</p>
                     </div>
                     <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
                     <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
+                    <input type="hidden" id="image_preview" name="image_preview" value="{{ old('image_preview') }}">
                     @error('image')
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
@@ -55,35 +52,49 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const maxTags = 3; // 最大選択可能数
-            const checkboxes = document.querySelectorAll('.tag-checkbox');
-            const tagError = document.getElementById('tagError');
-
-            checkboxes.forEach(function (checkbox) {
-                checkbox.addEventListener('change', function () {
-                    const checkedCount = document.querySelectorAll('.tag-checkbox:checked').length;
-
-                    if (checkedCount > maxTags) {
-                        this.checked = false; // チェックを無効化
-                        tagError.style.display = 'block'; // エラーメッセージを表示
-                    } else {
-                        tagError.style.display = 'none'; // エラーメッセージを非表示
-                    }
-                });
-            });
-
             const fileInput = document.getElementById('image');
             const fileError = document.getElementById('fileError');
+            const previewImage = document.getElementById('currentImage');
+            const imageMessage = document.getElementById('imageMessage');
+            const imagePreviewInput = document.getElementById('image_preview');
             const maxSize = 2 * 1024 * 1024; // 2MB in bytes
 
-            document.getElementById('articleForm').addEventListener('submit', function(event) {
+            // 画像のプレビュー表示
+            fileInput.addEventListener('change', function (event) {
+                const file = event.target.files[0];
+
+                if (file) {
+                    if (file.size > maxSize) {
+                        fileError.style.display = 'block';
+                        previewImage.style.display = 'none';
+                        imageMessage.style.display = 'none';
+                        imagePreviewInput.value = ''; // プレビュー情報をクリア
+                    } else {
+                        fileError.style.display = 'none';
+
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            previewImage.src = e.target.result;
+                            previewImage.style.display = 'block';
+                            imageMessage.style.display = 'block';
+                            imagePreviewInput.value = e.target.result; // プレビュー情報を保持
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                } else {
+                    previewImage.style.display = 'none';
+                    imageMessage.style.display = 'none';
+                    imagePreviewInput.value = ''; // プレビュー情報をクリア
+                }
+            });
+
+            // フォーム送信時の画像サイズ検証
+            document.getElementById('articleForm').addEventListener('submit', function (event) {
                 if (fileInput.files.length > 0) {
                     const file = fileInput.files[0];
                     if (file.size > maxSize) {
                         event.preventDefault(); // フォーム送信をキャンセル
                         fileError.style.display = 'block'; // エラーメッセージを表示
-                    } else {
-                        fileError.style.display = 'none'; // エラーメッセージを非表示
                     }
                 }
             });
