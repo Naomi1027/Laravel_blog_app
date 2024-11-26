@@ -42,6 +42,9 @@ jobs:
         echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
         echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
 
+    - name: Debug .env file
+      run: cat .env
+
     - name: Wait for PostgreSQL
       run: |
         echo "Waiting for PostgreSQL to be ready..."
@@ -51,8 +54,15 @@ jobs:
           sleep 1
         done
 
+    - name: Verify PostgreSQL connection with psql
+      run: |
+        PGPASSWORD=postgres psql -h db -U postgres -d laravel_testing -c "SELECT 1"
+
     - name: Install Dependencies
       run: composer install --prefer-dist --no-progress
+
+    - name: Debug Composer Install
+      run: composer install --prefer-dist --no-progress || cat composer.lock
 
     - name: Generate key
       run: php artisan key:generate
