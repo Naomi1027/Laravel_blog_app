@@ -4,18 +4,17 @@ on: [push, pull_request]
 
 jobs:
   laravel-tests:
-
     runs-on: ubuntu-latest
 
     services:
       postgres:
-        image: postgres:13
+        image: postgres:12
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: laravel_testing
+          POSTGRES_USER: 'postgres'
+          POSTGRES_PASSWORD: 'postgres'
+          POSTGRES_DB: 'laravel_testing'
         options: >-
-          --health-cmd pg_isready -U postgres
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -23,30 +22,34 @@ jobs:
           - 5432:5432
 
     steps:
-    - uses: shivammathur/setup-php@v2
+    - uses: actions/checkout@v2
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
         extensions: mbstring, intl, pgsql
 
-    - uses: actions/checkout@v4
-
-    - name: Copy .env file
+    - name: Set up .env file
       run: |
-        echo "APP_ENV=testing" > .env
+        echo "APP_ENV=testing" >> .env
         echo "APP_DEBUG=true" >> .env
         echo "APP_KEY=" >> .env
         echo "DB_CONNECTION=pgsql" >> .env
-        echo "DB_HOST=postgres" >> .env
+        echo "DB_HOST=db" >> .env
         echo "DB_PORT=5432" >> .env
         echo "DB_DATABASE=laravel_testing" >> .env
         echo "DB_USERNAME=postgres" >> .env
         echo "DB_PASSWORD=postgres" >> .env
 
+    - name: Debug .env file
+      run: cat .env
+
     - name: Wait for PostgreSQL
       run: |
         echo "Waiting for PostgreSQL to be ready..."
         for i in {1..30}; do
-          pg_isready -h postgres -p 5432 -U postgres && echo "PostgreSQL is ready!" && break
+          pg_isready -h db -p 5432 -U postgres && echo "PostgreSQL is ready!" && break
           echo "PostgreSQL is not ready, retrying in 1 second..."
           sleep 1
         done
@@ -57,14 +60,14 @@ jobs:
     - name: Install Dependencies
       run: composer install --prefer-dist --no-progress
 
-    - name: Generate Application Key
+    - name: Generate key
       run: php artisan key:generate
 
-    - name: Set Permissions
+    - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
 
-    - name: Run Database Migrations
-      run: php artisan migrate --force
+    - name: Execute Migration & Seed
+      run: php artisan migrate:refresh --seed --force
 
-    - name: Run Tests
-      run: php artisan test
+    - name: Execute tests (Unit and Feature tests) via PHPUnit
+      run: vendor/bin/phpunit
