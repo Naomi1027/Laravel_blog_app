@@ -55,7 +55,7 @@ class ArticleController extends Controller
         $article = new Article(array_merge($id, $validated));
 
         // 新しい画像がアップロードされた場合
-        if ($request->file('image')) {
+        if ($request->safe()->only(['image'])) {
             // 画像をS3に保存
             $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
             $imagePath = str_replace('/storage/', '/', Storage::url($path));
