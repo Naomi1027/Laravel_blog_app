@@ -53,7 +53,7 @@ class RegisteredUserController extends Controller
             // AWSのS3のimagesディレクトリに保存
             $path = Storage::disk('s3')->put('/images', request()->file('icon_path'), 'public');
             // アップロードした画像のフルパスを取得
-            $iconPath = Storage::disk('s3')->url($path);
+            $iconPath = str_replace('/storage/', '/', Storage::url($path));
         }
 
         $user = User::create([

@@ -32,7 +32,7 @@
                     <label for="image">画像</label>
                     <div class="mb-4">
                         @if ($article->image)
-                            <img src="{{ $article->image }}" id="currentImage" alt="現在の画像" class="w-48 h-48 object-cover border mb-4">
+                        <img src="{{ Storage::disk('s3')->url("$article->image")}}" id="currentImage" alt="現在の画像" class="w-48 h-48 object-cover border mb-4">
                             <!-- 画像削除用のチェックボックスを追加 -->
                             <div>
                                 <input type="checkbox" id="delete_image" name="delete_image" value="1">

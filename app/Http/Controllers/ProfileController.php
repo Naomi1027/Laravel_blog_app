@@ -33,7 +33,7 @@ class ProfileController extends Controller
         // フォームに画像があり、既存のアイコンがデフォルト画像の場合は、フォームの画像をS3に保存して、DBにパスを保存
         if ($request->hasFile('icon_path')) {
             $path = Storage::disk('s3')->put('/images', $request->file('icon_path'), 'public');
-            $updateUser->icon_path = Storage::disk('s3')->url($path);
+            $updateUser->icon_path = str_replace('/storage/', '/', Storage::url($path));
         }
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
