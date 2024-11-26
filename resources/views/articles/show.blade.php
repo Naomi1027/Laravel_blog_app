@@ -13,7 +13,7 @@
                 @if ($article->user->icon_path === null)
                     <img src="{{ asset('/images/user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
                 @else
-                    <img src="{{ $article->user->icon_path }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+                <img src="{{ Storage::disk('s3')->url($article->user->icon_path)}}" alt="アイコン" class="w-24 h-24 rounded-full" />
                 @endif
             </div>
             <div class="flex mt-4 ml-6">
@@ -82,7 +82,7 @@
             @if ($comment->user->icon_path === null)
                 <img src="{{ asset('/images/user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
             @else
-                <img src="{{ $comment->user->icon_path }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+            <img src="{{ Storage::disk('s3')->url($comment->user->icon_path)}}" alt="アイコン" class="w-24 h-24 rounded-full" />
             @endif
             <h2 class="mb-6 ml-4 text-2xl">{{ $comment->user->display_name }}</h2>
             @if (Auth::id() === $comment->user_id)
@@ -103,7 +103,10 @@
     @auth
     <section class="border-2 border-gray-400 mt-4 p-8">
         <div class="flex mb-4">
-            <img src="{{ Auth::user()->icon_path ?? asset('/images/user_default.png') }}" alt="アイコン" class="w-24 h-24 rounded-full" />
+            <img
+                src="{{ Auth::user()->icon_path ? Storage::disk('s3')->url(Auth::user()->icon_path) : asset('/images/user_default.png') }}"
+                alt="アイコン"
+                class="w-24 h-24 rounded-full" />
             <h3 class="text-2xl ml-4 mb-4">コメントする</h3>
         </div>
         <form method="POST" action="{{ route('comments.store', ['userName' => $article->user->name, 'articleId' => $article->id]) }}">

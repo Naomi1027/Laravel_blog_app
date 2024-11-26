@@ -62,7 +62,7 @@
                 <!-- 既存のアイコンを表示 -->
                 <div class="mt-3">
                     <img id="previewImage"
-                        src="{{ $user->icon_path ? $user->icon_path : asset('/images/user_default.png') }}"
+                        src="{{ $user->icon_path ? Storage::disk('s3')->url($user->icon_path) : asset('/images/user_default.png') }}"
                         alt="アイコン"
                         class="w-24 h-24 rounded-full">
                     <p id="existingIconMessage" class="text-gray-600 text-sm">
