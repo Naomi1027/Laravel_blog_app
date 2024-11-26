@@ -35,12 +35,12 @@ jobs:
         echo "APP_ENV=testing" >> .env
         echo "APP_DEBUG=true" >> .env
         echo "APP_KEY=" >> .env
-        echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" >> .env
-        echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-        echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-        echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
-        echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "DB_CONNECTION=pgsql" >> .env
+        echo "DB_HOST=db-test" >> .env
+        echo "DB_PORT=5432" >> .env
+        echo "DB_DATABASE=testing" >> .env
+        echo "DB_USERNAME=test" >> .env
+        echo "DB_PASSWORD=password" >> .env
 
     - name: Debug .env file
       run: cat .env
@@ -53,16 +53,12 @@ jobs:
           echo "PostgreSQL is not ready, retrying in 1 second..."
           sleep 1
         done
-
-    - name: Verify PostgreSQL connection with psql
-      run: |
-        PGPASSWORD=postgres psql -h db -U postgres -d laravel_testing -c "SELECT 1"
+        if [ $i -eq 30 ]; then
+          echo "PostgreSQL failed to become ready in time." && exit 1
+        fi
 
     - name: Install Dependencies
       run: composer install --prefer-dist --no-progress
-
-    - name: Debug Composer Install
-      run: composer install --prefer-dist --no-progress || cat composer.lock
 
     - name: Generate key
       run: php artisan key:generate
