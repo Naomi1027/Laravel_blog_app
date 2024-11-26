@@ -47,31 +47,32 @@ class ArticleController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreArticleRequest $request): RedirectResponse
-{
-    $id = ['user_id' => Auth::id()];
-    $validated = $request->safe()->except(['tags', 'image']);
+    {
+        $id = ['user_id' => Auth::id()];
+        $validated = $request->safe()->except(['tags', 'image']);
 
-    // 記事のインスタンスを作成
-    $article = new Article(array_merge($id, $validated));
+        // 記事のインスタンスを作成
+        $article = new Article(array_merge($id, $validated));
 
-    // 新しい画像がアップロードされた場合
-    if ($request->file('image')) {
-        // 画像をS3に保存
-        $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
-        $imagePath = str_replace('/storage/', '/', Storage::url($path));
-        $article->image = $imagePath;
+        // 新しい画像がアップロードされた場合
+        if ($request->file('image')) {
+            // 画像をS3に保存
+            $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
+            $imagePath = str_replace('/storage/', '/', Storage::url($path));
+            $article->image = $imagePath;
+        }
+
+        // 記事を保存
+        $article->save();
+
+        // タグを関連付け
+        if ($request->safe()->has('tags')) {
+            $article->tags()->attach($request->safe()['tags']);
+        }
+
+        return redirect('/');
     }
 
-    // 記事を保存
-    $article->save();
-
-    // タグを関連付け
-    if ($request->safe()->has('tags')) {
-        $article->tags()->attach($request->safe()['tags']);
-    }
-
-    return redirect('/');
-}
     /**
      * Display the specified resource.
      */
