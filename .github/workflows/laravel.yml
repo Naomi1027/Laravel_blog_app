@@ -19,7 +19,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-        - 5432:5432
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v2
@@ -28,10 +28,28 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        extensions: mbstring, intl
+        extensions: mbstring, intl, pgsql
 
-    - name: Copy .env.example to .env
-      run: cp .env.example .env
+    - name: Set up .env file
+      run: |
+        echo "APP_ENV=testing" >> .env
+        echo "APP_DEBUG=true" >> .env
+        echo "APP_KEY=" >> .env
+        echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" >> .env
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+        echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+        echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+        echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
+    - name: Wait for PostgreSQL
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        for i in {1..30}; do
+          pg_isready -h db -p 5432 -U postgres && echo "PostgreSQL is ready!" && break
+          echo "PostgreSQL is not ready, retrying in 1 second..."
+          sleep 1
+        done
 
     - name: Install Dependencies
       run: composer install --prefer-dist --no-progress
