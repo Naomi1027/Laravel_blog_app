@@ -13,6 +13,7 @@
 - DB: PostgreSQL v16.x
 - WEB: nginx v1.x
 - MAIL: mailpit v1.x
+- hosting: Vercel
 ```
 **Laravel10にしている理由**
 - 実際の案件ではLaravel10(とそれより以前のバージョン)のディレクトリ構成のまま動いているプロダクトが多いから
