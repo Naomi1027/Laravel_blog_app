@@ -48,7 +48,7 @@ jobs:
         run: composer install
 
       - name: set .env
-        run: echo ${{ secrets.LARAVEL_ENV }}
+        run: echo "${{ secrets.LARAVEL_ENV }}" > .env
 
       - name: Generate application key
         run: php artisan key:generate
