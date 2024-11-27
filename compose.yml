@@ -1,8 +1,8 @@
 services:
   app:
     build:
-    context: ./docker/app
-    dockerfile: Dockerfile
+      context: ./docker/app
+      dockerfile: Dockerfile
     volumes:
       - .:/app
     ports:
