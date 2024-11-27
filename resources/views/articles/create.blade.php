@@ -37,7 +37,7 @@
                     </div>
                     <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
                     <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
-                    <input type="hidden" id="image_preview" name="image_preview" value="{{ old('image_preview') }}">
+                    {{-- <input type="hidden" id="image_preview" name="image_preview" value="{{ old('image_preview') }}"> --}}
                     @error('image')
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
