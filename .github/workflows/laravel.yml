@@ -15,7 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup PHP 8.2
-        run: sudo update-alternatives --set php /usr/bin/php8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
 
       - name: cache vendor
         id: cache
