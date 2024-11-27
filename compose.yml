@@ -1,7 +1,8 @@
 services:
   app:
     build:
-      dockerfile: ./docker/app/Dockerfile
+    context: ./docker/app
+    dockerfile: Dockerfile
     volumes:
       - .:/app
     ports:
@@ -9,7 +10,8 @@ services:
 
   web:
     build:
-      dockerfile: ./docker/web/Dockerfile
+      context: ./docker/web
+      dockerfile: Dockerfile
     ports:
       - 8080:80
     depends_on:
@@ -19,7 +21,8 @@ services:
 
   db:
     build:
-      dockerfile: ./docker/db/Dockerfile
+      context: ./docker/db
+      dockerfile: Dockerfile
     ports:
       - 5431:5432
     environment:
