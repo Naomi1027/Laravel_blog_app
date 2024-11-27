@@ -37,6 +37,7 @@
                     </div>
                     <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
                     <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
+                    <img id="image_preview" name="image_preview" value="{{ old('image_preview') }}">
                     @error('image')
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
@@ -47,10 +48,6 @@
                 <button class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold" type="submit" value="投稿する">投稿する</button>
             </div>
         </form>
-        <!-- image_preview を div に移動 -->
-        <div style="display: none;">
-            <input type="hidden" id="image_preview" name="image_preview" value="{{ old('image_preview') }}">
-        </div>
     </div>
 
     <script>
