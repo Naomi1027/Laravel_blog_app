@@ -32,12 +32,12 @@
                     <label for="image">画像</label>
                     <div class="mb-4">
                         <!-- プレビュー用画像の要素 -->
-                        <img id="currentImage" src="{{ old('image_preview') }}" alt="選択された画像" class="w-48 h-48 object-cover border mb-4" style="display: {{ old('image_preview') ? 'block' : 'none' }};">
+                        <img id="currentImage" src="{{ old('image_preview') ? old('image_preview') : '#' }}" alt="選択された画像" class="w-48 h-48 object-cover border mb-4" style="display: {{ old('image_preview') ? 'block' : 'none' }};">
                         <p id="imageMessage" style="display: {{ old('image_preview') ? 'block' : 'none' }};">選択された画像です。</p>
                     </div>
                     <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
                     <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
-                    <img id="image_preview" name="image_preview" value="{{ old('image_preview') }}">
+                    {{-- <input type="hidden" id="image_preview" name="image_preview" value="{{ old('image_preview') }}"> --}}
                     @error('image')
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
@@ -48,6 +48,10 @@
                 <button class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold" type="submit" value="投稿する">投稿する</button>
             </div>
         </form>
+        <!-- プレビュー画像情報をフォーム外に移動 -->
+        <div style="display: none;">
+            <input type="hidden" id="image_preview" name="image_preview" value="{{ old('image_preview') }}">
+        </div>
     </div>
 
     <script>
@@ -58,6 +62,13 @@
             const imageMessage = document.getElementById('imageMessage');
             const imagePreviewInput = document.getElementById('image_preview');
             const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+
+            // バリデーションエラー後の画像プレビュー保持
+            if (imagePreviewInput.value) {
+                previewImage.src = imagePreviewInput.value;
+                previewImage.style.display = 'block';
+                imageMessage.style.display = 'block';
+            }
 
             // 画像のプレビュー表示
             fileInput.addEventListener('change', function (event) {
