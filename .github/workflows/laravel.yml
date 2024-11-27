@@ -17,24 +17,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
       - name: Build and run Docker containers
         run: |
           docker-compose -f docker-compose.yml up -d --build
 
-      - name: Wait for database services to be ready
+      - name: Wait for services to be ready
         run: |
-          echo "Waiting for database services to be ready..."
+          echo "Waiting for services to be ready..."
           for i in {1..30}; do
-            (docker-compose exec db pg_isready -U test -d training > /dev/null 2>&1 && echo "Training DB is ready" && break) || true
-            echo "Waiting for Training DB..."
-            sleep 5
-          done
-          for i in {1..30}; do
-            (docker-compose exec db-test pg_isready -U test -d testing > /dev/null 2>&1 && echo "Testing DB is ready" && break) || true
-            echo "Waiting for Testing DB..."
+            (docker-compose exec db pg_isready -U test -d training > /dev/null 2>&1 && echo "DB is ready" && break) || true
+            echo "Waiting for DB..."
             sleep 5
           done
 
