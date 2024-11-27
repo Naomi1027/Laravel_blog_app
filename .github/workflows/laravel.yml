@@ -12,6 +12,21 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U test_user"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - uses: actions/checkout@v2
       - name: Setup PHP 8.2
@@ -34,7 +49,20 @@ jobs:
         run: composer install
 
       - name: set laravel env
-        run: echo "${{ secrets.LARAVEL_ENV }}" > .env
+        run: |
+          echo "APP_ENV=testing" > .env
+          echo "DB_CONNECTION=pgsql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "DB_DATABASE=test_db" >> .env
+          echo "DB_USERNAME=test_user" >> .env
+          echo "DB_PASSWORD=test_password" >> .env
 
-      - name: run unit test
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Run unit tests
         run: vendor/bin/phpunit tests/
