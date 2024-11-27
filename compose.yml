@@ -35,7 +35,8 @@ services:
 
   db-test:
     build:
-      dockerfile: ./docker/db/Dockerfile
+      context: ./docker/db
+      dockerfile: Dockerfile
     ports:
       - 5433:5432 #PostgreSQLはコンテナ内でデフォルトでポート 5432 を使用しているため、5433:5432 のポートマッピングが必要
     environment:

@@ -17,10 +17,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
 
       - name: Build and run Docker containers
         run: |
@@ -30,25 +28,25 @@ jobs:
         run: |
           echo "Waiting for services to be ready..."
           for i in {1..30}; do
-            (docker-compose exec db pg_isready -U test -d training > /dev/null 2>&1 && echo "DB is ready" && break) || true
+            (docker-compose -f ./compose.yml exec db pg_isready -U test -d training > /dev/null 2>&1 && echo "DB is ready" && break) || true
             echo "Waiting for DB..."
             sleep 5
           done
 
       - name: Install dependencies
         run: |
-          docker-compose exec app composer install
+          docker-compose -f ./compose.yml exec app composer install
 
       - name: Set up environment
         run: |
-          docker-compose exec app cp .env.testing .env
-          docker-compose exec app php artisan key:generate
-          docker-compose exec app php artisan migrate --force
+          docker-compose -f ./compose.yml exec app cp .env.example .env
+          docker-compose -f ./compose.yml exec app php artisan key:generate
+          docker-compose -f ./compose.yml exec app php artisan migrate --force
 
       - name: Run tests
         run: |
-          docker-compose exec app php artisan test
+          docker-compose -f ./compose.yml exec app php artisan test
 
       - name: Tear down Docker containers
         if: always()
-        run: docker-compose down --volumes --remove-orphans
+        run: docker-compose -f ./compose.yml down --volumes --remove-orphans
