@@ -1,8 +1,7 @@
 services:
   app:
     build:
-      context: ./docker/app
-      dockerfile: Dockerfile
+      dockerfile: ./docker/app/Dockerfile
     volumes:
       - .:/app
     ports:
@@ -10,8 +9,7 @@ services:
 
   web:
     build:
-      context: ./docker/web
-      dockerfile: Dockerfile
+      dockerfile: ./docker/web/Dockerfile
     ports:
       - 8080:80
     depends_on:
@@ -21,8 +19,7 @@ services:
 
   db:
     build:
-      context: ./docker/db
-      dockerfile: Dockerfile
+      dockerfile: ./docker/db/Dockerfile
     ports:
       - 5431:5432
     environment:
@@ -35,8 +32,7 @@ services:
 
   db-test:
     build:
-      context: ./docker/db
-      dockerfile: Dockerfile
+      dockerfile: ./docker/db/Dockerfile
     ports:
       - 5433:5432 #PostgreSQLはコンテナ内でデフォルトでポート 5432 を使用しているため、5433:5432 のポートマッピングが必要
     environment:
