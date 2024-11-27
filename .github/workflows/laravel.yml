@@ -19,9 +19,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: github
-          POSTGRES_PASSWORD: secret
-          POSTGRES_DB: test_db
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: testing
         options: >-
           --health-cmd "pg_isready -U github -d test_db"
           --health-interval 10s
@@ -48,7 +48,7 @@ jobs:
           DB_CONNECTION: pgsql
           DB_HOST: db-test
           DB_PORT: 5432
-          DB_DATABASE: test_db
+          DB_DATABASE: testing
           DB_USERNAME: test
           DB_PASSWORD: password
         run: |
