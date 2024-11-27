@@ -47,8 +47,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: composer install
 
-      - name: copy .env
-        run: cp .env.testing .env
+      - name: set .env
+        run: echo ${{ secrets.LARAVEL_ENV }}
 
       - name: Generate application key
         run: php artisan key:generate
