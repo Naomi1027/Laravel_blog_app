@@ -163,6 +163,7 @@ class ArticleController extends Controller
         $article = Article::find($articleId);
         $article->delete();
         $article->tags()->detach();
+        Storage::disk('s3')->delete($article->image);
 
         return redirect()->route('articles.index');
     }
