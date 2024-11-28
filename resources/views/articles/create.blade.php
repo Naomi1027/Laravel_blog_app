@@ -32,12 +32,11 @@
                     <label for="image">画像</label>
                     <div class="mb-4">
                         <!-- プレビュー用画像の要素 -->
-                        <img id="currentImage" src="{{ old('image_preview') ? old('image_preview') : '#' }}" alt="選択された画像" class="w-48 h-48 object-cover border mb-4" style="display: {{ old('image_preview') ? 'block' : 'none' }};">
-                        <p id="imageMessage" style="display: {{ old('image_preview') ? 'block' : 'none' }};">選択された画像です。</p>
+                        <img id="image_preview" src="#" alt="選択された画像" class="w-48 h-48 object-cover border mb-4" style="display: none;">
+                        <p id="imageMessage" style="display: none;">選択された画像です。</p>
                     </div>
                     <input type="file" id="image" name="image" class="w-full border-solid border-2 p-2 text-xl">
                     <p id="fileError" class="text-red-700" style="display: none;">ファイルサイズが大きすぎます。2MB以下のファイルを選択してください。</p>
-                    <input type="hidden" id="image_preview" name="image_preview" value="{{ old('image_preview') }}">
                     @error('image')
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
@@ -45,30 +44,33 @@
             </div>
             <div class="flex gap-12 justify-center">
                 <a href="{{ route('articles.index') }}" class="w-24 text-center rounded-md bg-blue-700 p-2 inline-block tracking-normal text-white font-bold">戻る</a>
-                <button class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold" type="submit" value="投稿する">投稿する</button>
+                <button class="w-24 text-center rounded-md bg-cyan-400 p-2 inline-block tracking-normal text-white font-bold" type="submit">投稿する</button>
             </div>
         </form>
-        <!-- プレビュー画像情報をフォーム外に移動 -->
-        <div style="display: none;">
-            <input type="hidden" id="image_preview" name="image_preview" value="{{ old('image_preview') }}">
-        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.getElementById('image');
             const fileError = document.getElementById('fileError');
-            const previewImage = document.getElementById('currentImage');
+            const previewImage = document.getElementById('image_preview');
             const imageMessage = document.getElementById('imageMessage');
-            const imagePreviewInput = document.getElementById('image_preview');
             const maxSize = 2 * 1024 * 1024; // 2MB in bytes
 
-            // バリデーションエラー後の画像プレビュー保持
-            if (imagePreviewInput.value) {
-                previewImage.src = imagePreviewInput.value;
-                previewImage.style.display = 'block';
-                imageMessage.style.display = 'block';
-            }
+            const maxTags = 3; // 最大選択可能数
+            const checkboxes = document.querySelectorAll('.tag-checkbox');
+            const tagError = document.getElementById('tagError');
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
+                    const checkedCount = document.querySelectorAll('.tag-checkbox:checked').length;
+                    if (checkedCount > maxTags) {
+                        this.checked = false; // チェックを無効化
+                        tagError.style.display = 'block'; // エラーメッセージを表示
+                    } else {
+                        tagError.style.display = 'none'; // エラーメッセージを非表示
+                    }
+                });
+            });
 
             // 画像のプレビュー表示
             fileInput.addEventListener('change', function (event) {
@@ -79,7 +81,6 @@
                         fileError.style.display = 'block';
                         previewImage.style.display = 'none';
                         imageMessage.style.display = 'none';
-                        imagePreviewInput.value = ''; // プレビュー情報をクリア
                     } else {
                         fileError.style.display = 'none';
 
@@ -88,14 +89,12 @@
                             previewImage.src = e.target.result;
                             previewImage.style.display = 'block';
                             imageMessage.style.display = 'block';
-                            imagePreviewInput.value = e.target.result; // プレビュー情報を保持
                         };
                         reader.readAsDataURL(file);
                     }
                 } else {
                     previewImage.style.display = 'none';
                     imageMessage.style.display = 'none';
-                    imagePreviewInput.value = ''; // プレビュー情報をクリア
                 }
             });
 
