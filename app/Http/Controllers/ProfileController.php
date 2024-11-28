@@ -27,12 +27,18 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        // アイコン画像を上書き保存する場合は古い画像を削除
+        if(($currentIconPath = Auth::user()->icon_path) && $request->hasFile('icon_path')) {
+            if (Storage::disk('s3')->exists($currentIconPath)) {
+                Storage::disk('s3')->delete($currentIconPath);
+            }
+        }
         // フォームに入力された値を取得
         $updateUser = $request->user()->fill($request->validated());
 
         // フォームに画像があり、既存のアイコンがデフォルト画像の場合は、フォームの画像をS3に保存して、DBにパスを保存
         if ($request->hasFile('icon_path')) {
-            $updateUser->icon_path = Storage::disk('s3')->put('/images', $request->file('icon_path'), 'public');
+            $updateUser->icon_path = Storage::disk('s3')->put('/iconImages', $request->file('icon_path'), 'public');
         }
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
