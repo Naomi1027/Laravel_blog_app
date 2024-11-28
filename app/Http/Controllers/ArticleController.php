@@ -113,8 +113,7 @@ class ArticleController extends Controller
     public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
         // バリデーション済みのデータを取得
-        $validated = $request->validated();
-
+        $validated = $request->safe()->except(['tags', 'image']);
         $article = Article::findOrFail($articleId);
 
         // 画像削除の処理
@@ -127,18 +126,15 @@ class ArticleController extends Controller
         }
 
         // 新しい画像がアップロードされた場合
-        if ($request->hasFile('image')) {
+        if ($request->safe()->only(['image'])) {
             // 既存の画像を削除
             if ($article->image) {
                 Storage::disk('s3')->delete($article->image);
             }
             // 新しい画像をS3に保存
-            $path = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
-            $article->image = $path;
+            $article->image = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
         }
-
-        // その他のフィールドを更新
-        $article->save();
+        $article->update($validated);
 
         if ($request->safe()->has('tags')) {
             $article->tags()->sync($request->safe()['tags']);
