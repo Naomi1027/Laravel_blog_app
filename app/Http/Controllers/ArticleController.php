@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -163,7 +164,13 @@ class ArticleController extends Controller
         $article = Article::find($articleId);
         $article->delete();
         $article->tags()->detach();
-        Storage::disk('s3')->delete($article->image);
+
+        try {
+            Storage::disk('s3')->delete($article->image);
+        } catch (\Exception $e) {
+            Log::error('S3での画像削除に失敗しました: ' . $e->getMessage());
+            // エラーが発生しても処理を継続
+        }
 
         return redirect()->route('articles.index');
     }
