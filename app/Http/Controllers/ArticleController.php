@@ -138,7 +138,7 @@ class ArticleController extends Controller
         }
 
         // その他のフィールドを更新
-        $article->save();
+        $article->fill($validated)->save();
 
         if ($request->safe()->has('tags')) {
             $article->tags()->sync($request->safe()['tags']);
