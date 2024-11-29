@@ -59,8 +59,7 @@ class ArticleController extends Controller
         // 新しい画像がアップロードされた場合
         if ($request->safe()->only(['image'])) {
             // 画像をS3に保存
-            $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
-            $article->image = $path;
+            $article->image = Storage::disk('s3')->put('images', $request->file('image'), 'public');
         }
 
         // 記事を保存
@@ -121,22 +120,14 @@ class ArticleController extends Controller
 
         // 画像削除の処理
         if ($request->boolean('is_delete_image')) {
-            if ($article->image) {
-                // 画像のパスを直接使用
-                Storage::disk('s3')->delete($article->image);
-                $article->image = null;
-            }
+            $this->deleteImage($article);
         }
 
-        // 新しい画像がアップロードされた場合
+        // 新しい画像アップロード処理
         if ($request->safe()->only(['image'])) {
-            // 既存の画像を削除
-            if ($article->image) {
-                Storage::disk('s3')->delete($article->image);
-            }
-            // 新しい画像をS3に保存
-            $article->image = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
+            $this->storeImage($article, $request->file('image'));
         }
+
         $article->update($validated);
 
 
@@ -213,4 +204,27 @@ class ArticleController extends Controller
 
         return redirect()->route('articles.show', ['userName' => $article->user->name, 'articleId' => $articleId]);
     }
+
+    /**
+     * Delete the existing image from storage.
+     */
+    private function deleteImage(Article $article): void
+    {
+        if ($article->image) {
+            Storage::disk('s3')->delete($article->image);
+            $article->image = null;
+        }
+    }
+
+    /**
+     * Store a new image in storage.
+     */
+    private function storeImage(Article $article, $image): void
+    {
+        if ($article->image) {
+            Storage::disk('s3')->delete($article->image);
+        }
+        $article->image = Storage::disk('s3')->put('/images', $image, 'public');
+    }
+
 }
