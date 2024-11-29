@@ -120,7 +120,7 @@ class ArticleController extends Controller
         $article = Article::findOrFail($articleId);
 
         // 画像削除の処理
-        if ($request->boolean('delete_image')) {
+        if ($request->boolean('is_delete_image')) {
             if ($article->image) {
                 // 画像のパスを直接使用
                 Storage::disk('s3')->delete($article->image);
