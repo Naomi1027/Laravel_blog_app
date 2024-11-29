@@ -28,6 +28,7 @@
                         <p class="text-red-700">{{ $message }}</p>
                     @enderror
                 </div>
+
                 <div class="mb-6">
                     <label for="image">画像</label>
                     <div class="mb-4">
