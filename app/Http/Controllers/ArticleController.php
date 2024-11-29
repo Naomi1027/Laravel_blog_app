@@ -49,21 +49,20 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request): RedirectResponse
     {
+
         $id = ['user_id' => Auth::id()];
         $validated = $request->safe()->except(['tags', 'image']);
 
         // 記事のインスタンスを作成
         $article = new Article(array_merge($id, $validated));
 
-        // 新しい画像がアップロードされた場合
+        // 新しい画像アップロード処理
         if ($request->safe()->only(['image'])) {
-            // 画像をS3に保存
-            $path = Storage::disk('s3')->put('images', $request->file('image'), 'public');
-            $article->image = $path;
+            $this->storeImage($article, $request->file('image'));
         }
-
         // 記事を保存
         $article->save();
+
 
         // タグを関連付け
         if ($request->safe()->has('tags')) {
@@ -112,29 +111,23 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
+
         // バリデーション済みのデータを取得
         $validated = $request->safe()->except(['tags', 'image']);
         $article = Article::findOrFail($articleId);
 
         // 画像削除の処理
-        if ($request->boolean('delete_image')) {
-            if ($article->image) {
-                // 画像のパスを直接使用
-                Storage::disk('s3')->delete($article->image);
-                $article->image = null;
-            }
+        if ($request->boolean('is_delete_image')) {
+            $this->deleteImage($article);
         }
 
-        // 新しい画像がアップロードされた場合
+        // 新しい画像アップロード処理
         if ($request->safe()->only(['image'])) {
-            // 既存の画像を削除
-            if ($article->image) {
-                Storage::disk('s3')->delete($article->image);
-            }
-            // 新しい画像をS3に保存
-            $article->image = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
+            $this->storeImage($article, $request->file('image'));
         }
+
         $article->update($validated);
+
 
         if ($request->safe()->has('tags')) {
             $article->tags()->sync($request->safe()['tags']);
@@ -209,4 +202,27 @@ class ArticleController extends Controller
 
         return redirect()->route('articles.show', ['userName' => $article->user->name, 'articleId' => $articleId]);
     }
+
+    /**
+     * Delete the existing image from storage.
+     */
+    private function deleteImage(Article $article): void
+    {
+        if ($article->image) {
+            Storage::disk('s3')->delete($article->image);
+            $article->image = null;
+        }
+    }
+
+    /**
+     * Store a new image in storage.
+     */
+    private function storeImage(Article $article, $image): void
+    {
+        if ($article->image) {
+            Storage::disk('s3')->delete($article->image);
+        }
+        $article->image = Storage::disk('s3')->put('/images', $image, 'public');
+    }
+
 }

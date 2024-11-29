@@ -28,6 +28,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+
         // アイコン画像を上書き保存する場合は古い画像を削除
         if (($currentIconPath = Auth::user()->icon_path) && $request->hasFile('icon_path')) {
             try {
@@ -52,6 +53,7 @@ class ProfileController extends Controller
                 return back()->withErrors(['icon_path' => '画像のアップロードに失敗しました。']);
             }
         }
+
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
