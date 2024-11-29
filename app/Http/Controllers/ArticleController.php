@@ -49,6 +49,7 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request): RedirectResponse
     {
+
         $id = ['user_id' => Auth::id()];
         $validated = $request->safe()->except(['tags', 'image']);
 
@@ -64,6 +65,7 @@ class ArticleController extends Controller
 
         // 記事を保存
         $article->save();
+
 
         // タグを関連付け
         if ($request->safe()->has('tags')) {
@@ -112,6 +114,7 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
+
         // バリデーション済みのデータを取得
         $validated = $request->safe()->except(['tags', 'image']);
         $article = Article::findOrFail($articleId);
@@ -135,6 +138,7 @@ class ArticleController extends Controller
             $article->image = Storage::disk('s3')->put('/images', request()->file('image'), 'public');
         }
         $article->update($validated);
+
 
         if ($request->safe()->has('tags')) {
             $article->tags()->sync($request->safe()['tags']);
