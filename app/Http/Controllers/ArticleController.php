@@ -56,12 +56,10 @@ class ArticleController extends Controller
         // 記事のインスタンスを作成
         $article = new Article(array_merge($id, $validated));
 
-        // 新しい画像がアップロードされた場合
+        // 新しい画像アップロード処理
         if ($request->safe()->only(['image'])) {
-            // 画像をS3に保存
-            $article->image = Storage::disk('s3')->put('images', $request->file('image'), 'public');
+            $this->storeImage($article, $request->file('image'));
         }
-
         // 記事を保存
         $article->save();
 
