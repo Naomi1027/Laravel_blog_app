@@ -50,30 +50,12 @@
         </form>
     </div>
 
+    <script src="{{ asset('/js/preview.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const fileInput = document.getElementById('image');
-            const fileError = document.getElementById('fileError');
+            // 画像のプレビュー表示
             const previewImage = document.getElementById('image_preview');
             const imageMessage = document.getElementById('imageMessage');
-            const maxSize = 2 * 1024 * 1024; // 2MB in bytes
 
-            const maxTags = 3; // 最大選択可能数
-            const checkboxes = document.querySelectorAll('.tag-checkbox');
-            const tagError = document.getElementById('tagError');
-            checkboxes.forEach(function (checkbox) {
-                checkbox.addEventListener('change', function () {
-                    const checkedCount = document.querySelectorAll('.tag-checkbox:checked').length;
-                    if (checkedCount > maxTags) {
-                        this.checked = false; // チェックを無効化
-                        tagError.style.display = 'block'; // エラーメッセージを表示
-                    } else {
-                        tagError.style.display = 'none'; // エラーメッセージを非表示
-                    }
-                });
-            });
-
-            // 画像のプレビュー表示
             fileInput.addEventListener('change', function (event) {
                 const file = event.target.files[0];
 
@@ -98,17 +80,5 @@
                     imageMessage.style.display = 'none';
                 }
             });
-
-            // フォーム送信時の画像サイズ検証
-            document.getElementById('articleForm').addEventListener('submit', function (event) {
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    if (file.size > maxSize) {
-                        event.preventDefault(); // フォーム送信をキャンセル
-                        fileError.style.display = 'block'; // エラーメッセージを表示
-                    }
-                }
-            });
-        });
     </script>
 </x-app-layout>
