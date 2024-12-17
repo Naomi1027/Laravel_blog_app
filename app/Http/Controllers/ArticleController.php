@@ -63,7 +63,6 @@ class ArticleController extends Controller
         // 記事を保存
         $article->save();
 
-
         // タグを関連付け
         if ($request->safe()->has('tags')) {
             $article->tags()->attach($request->safe()['tags']);
@@ -111,10 +110,8 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, int $articleId): RedirectResponse
     {
-
         // バリデーション済みのデータを取得
         $validated = $request->safe()->except(['tags', 'image']);
-        dd($validated);
         $article = Article::findOrFail($articleId);
 
         // 画像削除の処理
@@ -129,7 +126,6 @@ class ArticleController extends Controller
         }
 
         $article->update($validated);
-
 
         if ($request->safe()->has('tags')) {
             $article->tags()->sync($request->safe()['tags']);
@@ -207,6 +203,7 @@ class ArticleController extends Controller
 
     /**
      * Delete the existing image from storage.
+     *
      * @param Article $article
      * @return void
      */
@@ -216,17 +213,18 @@ class ArticleController extends Controller
             return;
         }
 
-        // Storage::disk('s3')->delete($article->image);
-        dd(Storage::disk('s3')->delete($article->image));
+        Storage::disk('s3')->delete($article->image);
         $article->image = null;
     }
 
     /**
      * Store a new image in storage.
+     *
+     * @param Article $article
+     * @param string $image
      */
     private function storeImage(Article $article, $image): void
     {
         $article->image = Storage::disk('s3')->put('/images', $image, 'public');
     }
-
 }

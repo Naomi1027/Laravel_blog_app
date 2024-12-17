@@ -37,7 +37,7 @@
                             <!-- 画像削除用のチェックボックスを追加 -->
                             <div>
                                 <input type="checkbox" id="is_delete_image" name="is_delete_image" value="1">
-                                <label for="is_delete_image">画像を削除する</label>
+                                <label for="delete_image">画像を削除する</label>
                             </div>
                         @else
                             <p class="text-black-500">画像は設定されていません。</p>
