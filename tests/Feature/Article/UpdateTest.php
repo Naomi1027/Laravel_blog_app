@@ -1,15 +1,16 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Article;
 
 use App\Models\Article;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class ArticleControllerStoreTest extends TestCase
+class UpdateTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -19,6 +20,8 @@ class ArticleControllerStoreTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Storage::fake('s3');
 
         Tag::factory()
             ->count(20)
@@ -56,25 +59,39 @@ class ArticleControllerStoreTest extends TestCase
      *
      * @return void
      */
-    public function 記事投稿ができること(): void
+    public function 記事編集ができること(): void
     {
         $tags = Tag::take(3)->get();
-
-        // actingAsでログイン状態にする
-        $this->actingAs($this->user);
-
-        $response = $this->postJson('/api/articles', [
-            'title' => 'test title',
-            'content' => 'test content',
-            'tags' => [
-                $tags[0]->id,
-                $tags[1]->id,
-                $tags[2]->id,
-            ],
+        // 記事を投稿
+        $article = Article::factory()->create([
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+            'image' => 'test.jpeg',
+        ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+            'image' => 'test.jpeg',
         ]);
 
-        $response->assertStatus(201)
-            // レスポンスの構造を確認
+        $response = $this->actingAs($this->user)
+            ->post('/articles/'. $article->id, [
+                'title' => 'タイトル編集',
+                'content' => '本文編集',
+                'tags' => [
+                    $tags[0]->id,
+                    $tags[1]->id,
+                ],
+                'image' => UploadedFile::fake()->image('photo2.jpg'),
+            ]);
+
+        // 200レスポンスが返ってくること
+        $response->assertStatus(200)
+        // レスポンスの構造を確認
             ->assertJsonStructure([
                 'data' => [
                     'title',
@@ -87,40 +104,39 @@ class ArticleControllerStoreTest extends TestCase
                             'name',
                         ],
                     ],
+                    'image',
                 ],
             ])
-            // レスポンスの内容を確認
+        // レスポンスの内容を確認
             ->assertJson([
                 'data' => [
-                    'title' => 'test title',
+                    'title' => 'タイトル編集',
+                    'created_at' => $article->created_at,
                     'display_name' => $this->user->display_name,
                     'icon_path' => $this->user->icon_path,
                     'number_of_likes' => 0,
                     'tags' => [
                         ['name' => $tags[0]->name],
                         ['name' => $tags[1]->name],
-                        ['name' => $tags[2]->name],
                     ],
                 ],
             ]);
-        // DBに保存されていることを確認
+        // 編集後DBに保存されていることを確認
         $this->assertDatabaseHas('articles', [
-            'title' => 'test title',
-            'content' => 'test content',
+            'id' => $article->id,
+            'title' => 'タイトル編集',
+            'content' => '本文編集',
             'user_id' => $this->user->id,
         ]);
         // 中間テーブルに保存されていることを確認
         $this->assertDatabaseHas('article_tag', [
-            'article_id' => Article::first()->id,
+            'article_id' => $article->id,
             'tag_id' => $tags[0]->id,
         ]);
+        // 中間テーブルに保存されていることを確認
         $this->assertDatabaseHas('article_tag', [
-            'article_id' => Article::first()->id,
+            'article_id' => $article->id,
             'tag_id' => $tags[1]->id,
-        ]);
-        $this->assertDatabaseHas('article_tag', [
-            'article_id' => Article::first()->id,
-            'tag_id' => $tags[2]->id,
         ]);
     }
 
@@ -137,16 +153,33 @@ class ArticleControllerStoreTest extends TestCase
         array $data,
         array $expectedErrors
     ): void {
-        $this->actingAs($this->user);
-        $response = $this->postJson('/api/articles', $data);
-
+        // 記事を投稿
+        $article = Article::factory()->create([
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // ログインして記事を編集
+        $response = $this->actingAs($this->user)
+            ->putJson('/api/articles/'. $article->id, $data);
+        // 422レスポンスが返ってくること
         $response->assertStatus(422)
-
-            // エラーメッセージの内容を確認
+        // エラーメッセージを確認
             ->assertJsonValidationErrors($expectedErrors);
-
-        // DBに保存されていないことを確認
-        $this->assertDatabaseCount('articles', 0);
+        // // DBに編集が反映されていないことを確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
     }
 
     /**
@@ -257,24 +290,125 @@ class ArticleControllerStoreTest extends TestCase
      *
      * @return void
      */
-    public function 未ログインでは記事投稿ができないこと(): void
+    public function 未ログインでは記事編集ができないこと(): void
     {
-        $tags = Tag::all();
-
-        $response = $this->postJson('/api/articles', [
-            'title' => 'test title',
-            'content' => 'test content',
+        $tags = Tag::take(3)->get();
+        // 記事を投稿
+        $article = Article::factory()->create([
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // 未ログインで記事を編集
+        $response = $this->putJson('/api/articles/'. $article->id, [
+            'title' => 'タイトル編集',
+            'content' => '本文編集',
             'tags' => [
                 $tags[0]->id,
                 $tags[1]->id,
-                $tags[2]->id,
             ],
         ]);
+        // 401レスポンスが返ってくること
+        $response->assertStatus(401);
+        // DBに編集が反映されていないことを確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+    }
 
-        $response->assertStatus(401)
-            ->assertStatus(ResponseAlias::HTTP_UNAUTHORIZED);
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function 他のユーザーの記事を編集しようとした場合403エラーが返り編集できないこと(): void
+    {
+        $tags = Tag::take(3)->get();
+        // 記事を投稿
+        $article = Article::factory()->create([
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // 別のユーザーを作成
+        $anotherUser = User::factory()->create();
+        // 別のユーザーでログイン
+        $response = $this->actingAs($anotherUser)
+            ->putJson('/api/articles/'. $article->id, [
+                'title' => 'タイトル編集',
+                'content' => '本文編集',
+                'tags' => [
+                    $tags[0]->id,
+                    $tags[1]->id,
+                ],
+            ]);
+        // 403レスポンスが返ってくること
+        $response->assertStatus(403);
+        // DBに編集が反映されていないことを確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+    }
 
-        // DBに保存されていないことを確認
-        $this->assertDatabaseCount('articles', 0);
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function 存在しない記事_i_dを指定した場合404エラーが返ること(): void
+    {
+        $tags = Tag::take(3)->get();
+        // 記事を投稿
+        $article = Article::factory()->create([
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // 編集前のDBの状態を確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
+        // ログインして存在しない記事IDを指定して記事を編集
+        $response = $this->actingAs($this->user)
+            ->putJson('/api/articles/'. ($article->id + 1), [
+                'title' => 'タイトル編集',
+                'content' => '本文編集',
+                'tags' => [
+                    $tags[0]->id,
+                    $tags[1]->id,
+                ],
+            ]);
+        // 404レスポンスが返ってくること
+        $response->assertStatus(404);
+        // DBに編集が反映されていないことを確認
+        $this->assertDatabaseHas('articles', [
+            'id' => $article->id,
+            'title' => 'タイトル',
+            'content' => '本文',
+            'user_id' => $this->user->id,
+        ]);
     }
 }

@@ -27,7 +27,7 @@ class UpdateArticleRequest extends FormRequest
             'tags' => 'nullable|array|max:3',
             'tags.*' => 'numeric|exists:tags,id',
             'image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'delete_image' => 'nullable|boolean',
+            'is_delete_image' => 'nullable|boolean',
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Api\Article;
 
 use App\Models\Article;
 use App\Models\Tag;
@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
-class ArticleControllerIndexTest extends TestCase
+class IndexTest extends TestCase
 {
     /**
      * A basic feature test example.
