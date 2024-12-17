@@ -28,8 +28,8 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-
         // アイコン画像を上書き保存する場合は古い画像を削除
+        $currentIconPath = Auth::user()->icon_path;
         if (($currentIconPath = Auth::user()->icon_path) && $request->hasFile('icon_path')) {
             try {
                 if (Storage::disk('s3')->exists($currentIconPath)) {

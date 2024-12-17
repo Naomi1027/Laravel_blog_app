@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ArticleControllerDeleteTest extends TestCase
+class DeleteTest extends TestCase
 {
     use RefreshDatabase;
 

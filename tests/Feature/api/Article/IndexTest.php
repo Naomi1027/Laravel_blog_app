@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
-class ArticleControllerIndexTest extends TestCase
+class IndexTest extends TestCase
 {
     /**
      * A basic feature test example.

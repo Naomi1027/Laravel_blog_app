@@ -114,6 +114,7 @@ class ArticleController extends Controller
 
         // バリデーション済みのデータを取得
         $validated = $request->safe()->except(['tags', 'image']);
+        dd($validated);
         $article = Article::findOrFail($articleId);
 
         // 画像削除の処理
@@ -123,6 +124,7 @@ class ArticleController extends Controller
 
         // 新しい画像アップロード処理
         if ($request->safe()->only(['image'])) {
+            $this->deleteImage($article);
             $this->storeImage($article, $request->file('image'));
         }
 
@@ -205,13 +207,18 @@ class ArticleController extends Controller
 
     /**
      * Delete the existing image from storage.
+     * @param Article $article
+     * @return void
      */
     private function deleteImage(Article $article): void
     {
-        if ($article->image) {
-            Storage::disk('s3')->delete($article->image);
-            $article->image = null;
+        if (empty($article->image)) {
+            return;
         }
+
+        // Storage::disk('s3')->delete($article->image);
+        dd(Storage::disk('s3')->delete($article->image));
+        $article->image = null;
     }
 
     /**
@@ -219,9 +226,6 @@ class ArticleController extends Controller
      */
     private function storeImage(Article $article, $image): void
     {
-        if ($article->image) {
-            Storage::disk('s3')->delete($article->image);
-        }
         $article->image = Storage::disk('s3')->put('/images', $image, 'public');
     }
 
