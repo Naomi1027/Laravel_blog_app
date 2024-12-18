@@ -36,3 +36,6 @@ jobs:
           review_simple_changes: false
           review_comment_lgtm: false
         continue-on-error: true
+        retry:
+          max_attempts: 2
+          wait_seconds: 10
