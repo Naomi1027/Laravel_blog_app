@@ -1,19 +1,40 @@
 name: Laravel Docker CI/CD
-on: [push, pull_request]
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ secrets.DB_TEST_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_TEST_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_TEST_NAME }}
+
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U test_user"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
 
-      - name: Cache vendor
+      - name: cache vendor
         id: cache
         uses: actions/cache@v4
         with:
@@ -22,28 +43,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+      - name: composer install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: composer install
 
       - name: Copy .env
         run: cp .env.example .env
 
-      - name: Set .env
-        run: echo "${{ secrets.LARAVEL_ENV }}" >> .env
+      - name: set .env
+        run: echo "${{ secrets.LARAVEL_ENV }}" > .env
 
       - name: Generate application key
         run: php artisan key:generate
-
-      - name: Create database
-        run: |
-          sudo apt-get install -y mysql-server
-          sudo mysql -e 'CREATE DATABASE IF NOT EXISTS test_db;'
-          sudo mysql -e "CREATE USER 'test_user'@'localhost' IDENTIFIED BY 'test_password';"
-          sudo mysql -e "GRANT ALL PRIVILEGES ON test_db.* TO 'test_user'@'localhost';"
-          sudo mysql -e 'FLUSH PRIVILEGES;'
 
       - name: Run migrations
         run: php artisan migrate --force
 
       - name: Run unit tests
-        run: vendor/bin/phpunit --testdox
+        run: vendor/bin/phpunit tests/
