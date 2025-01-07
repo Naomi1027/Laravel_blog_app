@@ -9,26 +9,60 @@ on:
       - '*'
 
 jobs:
-  tests:
-    name: Run tests
+  test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: training
 
-      - name: Setup PHP
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
-          coverage: none
+          php-version: 8.2
 
-      - name: Run composer install
-        run: composer install -n --prefer-dist
+      - name: cache vendor
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ./vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
-      - name: Prepare Laravel Application
+      - name: composer install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: composer install
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Setup .env
         run: |
-          cp .env.ci .env
-          php artisan key:generate
+          echo "APP_ENV=testing" >> .env
+          echo "DB_CONNECTION=pgsql" >> .env
+          echo "DB_HOST=localhost" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "DB_DATABASE=${{ secrets.DB_TEST_NAME }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_TEST_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_TEST_PASSWORD }}" >> .env
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
 
       - name: Run tests
+        env:
+          DB_HOST: localhost
         run: php artisan test
