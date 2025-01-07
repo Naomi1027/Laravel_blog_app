@@ -18,17 +18,18 @@ jobs:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: password
           POSTGRES_DB: training
-
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
+          extensions: pdo, pgsql, pdo_pgsql
 
       - name: cache vendor
         id: cache
@@ -41,7 +42,7 @@ jobs:
 
       - name: composer install
         if: steps.cache.outputs.cache-hit != 'true'
-        run: composer install
+        run: composer install --prefer-dist --no-progress
 
       - name: Copy .env
         run: cp .env.example .env
@@ -52,17 +53,20 @@ jobs:
           echo "DB_CONNECTION=pgsql" >> .env
           echo "DB_HOST=localhost" >> .env
           echo "DB_PORT=5432" >> .env
-          echo "DB_DATABASE=${{ secrets.DB_TEST_NAME }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_TEST_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_TEST_PASSWORD }}" >> .env
+          echo "DB_DATABASE=training" >> .env
+          echo "DB_USERNAME=test" >> .env
+          echo "DB_PASSWORD=password" >> .env
 
       - name: Generate application key
         run: php artisan key:generate
+
+      - name: Clear config cache
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
 
       - name: Run migrations
         run: php artisan migrate --force
 
       - name: Run tests
-        env:
-          DB_HOST: localhost
         run: php artisan test
