@@ -52,33 +52,8 @@
 
     <script src="{{ asset('/js/preview.js') }}"></script>
     <script>
-            // 画像のプレビュー表示
-            const previewImage = document.getElementById('image_preview');
-            const imageMessage = document.getElementById('imageMessage');
-
-            fileInput.addEventListener('change', function (event) {
-                const file = event.target.files[0];
-
-                if (file) {
-                    if (file.size > maxSize) {
-                        fileError.style.display = 'block';
-                        previewImage.style.display = 'none';
-                        imageMessage.style.display = 'none';
-                    } else {
-                        fileError.style.display = 'none';
-
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            previewImage.src = e.target.result;
-                            previewImage.style.display = 'block';
-                            imageMessage.style.display = 'block';
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                } else {
-                    previewImage.style.display = 'none';
-                    imageMessage.style.display = 'none';
-                }
-            });
+        document.addEventListener('DOMContentLoaded', function () {
+            setupImagePreview('image_preview', 'imageMessage', 'image', 'fileError', 2 * 1024 * 1024);
+        });
     </script>
 </x-app-layout>

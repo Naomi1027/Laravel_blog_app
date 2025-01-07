@@ -32,3 +32,50 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+function setupImagePreview(previewImageId, imageMessageId, fileInputId, fileErrorId, maxSize) {
+    const previewImage = document.getElementById(previewImageId);
+    const imageMessage = document.getElementById(imageMessageId);
+    const fileInput = document.getElementById(fileInputId);
+    const fileError = document.getElementById(fileErrorId);
+
+    fileInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+
+        if (file) {
+            if (file.size > maxSize) {
+                showError(fileError, previewImage, imageMessage);
+            } else {
+                hideError(fileError);
+                previewFile(file, previewImage, imageMessage);
+            }
+        } else {
+            hidePreview(previewImage, imageMessage);
+        }
+    });
+}
+
+function showError(fileError, previewImage, imageMessage) {
+    fileError.style.display = 'block';
+    previewImage.style.display = 'none';
+    imageMessage.style.display = 'none';
+}
+
+function hideError(fileError) {
+    fileError.style.display = 'none';
+}
+
+function hidePreview(previewImage, imageMessage) {
+    previewImage.style.display = 'none';
+    imageMessage.style.display = 'none';
+}
+
+function previewFile(file, previewImage, imageMessage) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+        imageMessage.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+}
