@@ -51,7 +51,7 @@ jobs:
         run: |
           echo "APP_ENV=testing" >> .env
           echo "DB_CONNECTION=pgsql" >> .env
-          echo "DB_HOST=localhost" >> .env
+          echo "DB_HOST=db" >> .env
           echo "DB_PORT=5432" >> .env
           echo "DB_DATABASE=training" >> .env
           echo "DB_USERNAME=test" >> .env
