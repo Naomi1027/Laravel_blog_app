@@ -62,5 +62,7 @@ jobs:
       - name: Run migrations
         run: php artisan migrate --force
 
-      - name: Run unit tests
-        run: vendor/bin/phpunit tests/
+      - name: exec unit test
+        env:
+          DB_HOST: localhost
+        run: php artisan test
