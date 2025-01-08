@@ -10,10 +10,7 @@ on:
     types: [created]
 
 concurrency:
-  group:
-    ${{ github.repository }}-${{ github.event.number || github.head_ref ||
-    github.sha }}-${{ github.workflow }}-${{ github.event_name ==
-    'pull_request_review_comment' && 'pr_comment' || 'pr' }}
+  group: ${{ github.repository }}-${{ github.event.number || github.head_ref || github.sha }}-${{ github.workflow }}-${{ github.event_name == 'pull_request_review_comment' && 'pr_comment' || 'pr' }}
   cancel-in-progress: ${{ github.event_name != 'pull_request_review_comment' }}
 
 jobs:
@@ -36,6 +33,3 @@ jobs:
           review_simple_changes: false
           review_comment_lgtm: false
         continue-on-error: true
-        retry:
-          max_attempts: 2
-          wait_seconds: 10

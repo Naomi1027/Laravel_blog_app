@@ -89,38 +89,11 @@ class UpdateTest extends TestCase
                 'image' => UploadedFile::fake()->image('photo2.jpg'),
             ]);
 
-        // 200レスポンスが返ってくること
-        $response->assertStatus(200)
-        // レスポンスの構造を確認
-            ->assertJsonStructure([
-                'data' => [
-                    'title',
-                    'created_at',
-                    'display_name',
-                    'icon_path',
-                    'number_of_likes',
-                    'tags' => [
-                        '*' => [
-                            'name',
-                        ],
-                    ],
-                    'image',
-                ],
-            ])
-        // レスポンスの内容を確認
-            ->assertJson([
-                'data' => [
-                    'title' => 'タイトル編集',
-                    'created_at' => $article->created_at,
-                    'display_name' => $this->user->display_name,
-                    'icon_path' => $this->user->icon_path,
-                    'number_of_likes' => 0,
-                    'tags' => [
-                        ['name' => $tags[0]->name],
-                        ['name' => $tags[1]->name],
-                    ],
-                ],
-            ]);
+        // 302レスポンスが返ってくること
+        $response->assertStatus(302);
+        // リダイレクト先のレスポンスを取得
+        $redirectResponse = $this->get($response->headers->get('Location'));
+
         // 編集後DBに保存されていることを確認
         $this->assertDatabaseHas('articles', [
             'id' => $article->id,

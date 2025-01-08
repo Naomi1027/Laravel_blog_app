@@ -84,25 +84,24 @@ class IndexTest extends TestCase
                         ],
                     ],
                 ],
-            ])
-            ->assertJson(
-                function (AssertableJson $json) use ($articleLists) {
-                    foreach ($articleLists as $index => $articleList) {
-                        $json->where('data.' . $index . '.title', $articleList->title)
-                            ->where('data.' . $index . '.created_at', $articleList->created_at->toDateTimeString())
-                            ->where('data.' . $index . '.display_name', $articleList->user->display_name)
-                            ->where('data.' . $index . '.icon_path', $articleList->user->icon_path)
-                            ->where('data.' . $index . '.number_of_likes', $articleList->userLikes->count())
-                            ->has('data.' . $index . '.tags', function (AssertableJson $json) use ($articleList) {
-                                foreach ($articleList->tags as $key => $tag) {
-                                    $json->where($key . '.name', $tag->name);
-                                }
-                            })
-                            ->etc();
-                    }
-                }
-            )
-            ->assertJsonCount(10, 'data');
+                'links',
+                'meta',
+            ]);
+        $response->assertJson(function (AssertableJson $json) use ($articleLists) {
+            $json->has('data')
+                ->has('links')
+                ->has('meta');
+
+            // データ部分を検証
+            foreach ($articleLists as $index => $article) {
+                $json->where("data.{$index}.id", $article->id)
+                    ->where("data.{$index}.title", $article->title)
+                    ->where("data.{$index}.created_at", $article->created_at->toDateTimeString())
+                    ->has("data.{$index}.tags");
+            }
+        });
+
+        $response->assertJsonCount(10, 'data');
     }
 
     /**

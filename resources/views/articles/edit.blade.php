@@ -58,4 +58,9 @@
     </div>
 
     <script src="{{ asset('/js/preview.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            setupImagePreview('currentImage', 'imageMessage', 'image', 'fileError', 2 * 1024 * 1024);
+        });
+    </script>
 </x-app-layout>
