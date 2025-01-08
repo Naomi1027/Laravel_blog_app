@@ -30,10 +30,10 @@ jobs:
       - name: Run composer install
         run: composer install -n --prefer-dist
 
-      - name: Run node.js
-        run: |
-          npm install
-          npm run prod
+      # - name: Run node.js
+      #   run: |
+      #     npm install
+      #     npm run prod
 
       - name: Prepare Laravel Application
         run: |
