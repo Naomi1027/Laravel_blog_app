@@ -1,33 +1,44 @@
-name: Test Postgres Setup
+name: Laravel Docker CI/CD
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - '*'
 
 jobs:
-  postgres-test:
+  tests:
+    name: Laravel Docker CI/CD
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: "test"
-          POSTGRES_PASSWORD: "password"
-          POSTGRES_DB: "training"
-        ports:
-          - 5432:5432
-        options: >
-          --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - name: Wait for Postgres to be ready
+      - name: Start MySQL
         run: |
-          for i in {1..10}; do
-            if pg_isready -h postgres -p 5432 -U test; then
-              echo "Postgres is ready"
-              exit 0
-            fi
-            echo "Waiting for Postgres..."
-            sleep 5
-          done
-          echo "Postgres did not become ready in time"
-          exit 1
+          sudo systemctl start mysql.service
+          mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS testing"
+          mysql -uroot -proot -e "SHOW DATABASES"
+
+      - uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      - name: Run composer install
+        run: composer install -n --prefer-dist
+
+      - name: Run node.js
+        run: |
+          npm install
+          npm run prod
+
+      - name: Prepare Laravel Application
+        run: |
+          touch .env.testing
+          echo "${{ vars.DOT_ENV_TESTING }}" >> .env.testing
+
+      - name: Run tests
+        run: php artisan test
