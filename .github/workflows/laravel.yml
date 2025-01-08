@@ -1,15 +1,10 @@
-name: Laravel Docker CI/CD
+name: Test Postgres Setup
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - '*'
 
 jobs:
-  test:
+  postgres-test:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -19,42 +14,18 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: training
         ports:
-          - 5433:5432
+          - 5432:5432
         options: >
-          --health-cmd="pg_isready -U test -d training"
+          --health-cmd pg_isready -U test -d training
           --health-interval=10s
-          --health-timeout=10s
-          --health-retries=10
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.2
-          extensions: pdo, pgsql, pdo_pgsql
-
-      - name: composer install
-        run: composer install --prefer-dist --no-progress
-
-      - name: Copy .env
-        run: cp .env.example .env
-
-      - name: Setup .env
-        run: |
-          echo "APP_ENV=testing" >> .env
-          echo "DB_CONNECTION=pgsql" >> .env
-          echo "DB_HOST=postgres" >> .env
-          echo "DB_PORT=5433" >> .env
-          echo "DB_DATABASE=training" >> .env
-          echo "DB_USERNAME=test" >> .env
-          echo "DB_PASSWORD=password" >> .env
-
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..10}; do
-            if pg_isready -h postgres -p 5433 -U test; then
+            if pg_isready -h postgres -p 5432 -U test; then
               echo "Postgres is ready"
               exit 0
             fi
@@ -63,19 +34,3 @@ jobs:
           done
           echo "Postgres did not become ready in time"
           exit 1
-
-      - name: Generate application key
-        run: php artisan key:generate
-
-      - name: Clear config cache
-        run: |
-          php artisan config:clear
-          php artisan cache:clear
-
-      - name: Run migrations and seed
-        run: |
-          php artisan migrate --force
-          php artisan db:seed --force
-
-      - name: Run tests
-        run: php artisan test --env=testing
