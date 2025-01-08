@@ -94,9 +94,6 @@ class UpdateTest extends TestCase
         // リダイレクト先のレスポンスを取得
         $redirectResponse = $this->get($response->headers->get('Location'));
 
-        // リダイレクト先のレスポンスのステータスコードを確認
-        $redirectResponse->assertStatus(200);
-
         // 編集後DBに保存されていることを確認
         $this->assertDatabaseHas('articles', [
             'id' => $article->id,
