@@ -17,11 +17,11 @@ jobs:
         env:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: testing
+          POSTGRES_DB: training
         ports:
           - 5433:5432
         options: >
-          --health-cmd="pg_isready -U test -d testing"
+          --health-cmd="pg_isready -U test -d training"
           --health-interval=10s
           --health-timeout=10s
           --health-retries=10
@@ -47,7 +47,7 @@ jobs:
           echo "DB_CONNECTION=pgsql" >> .env
           echo "DB_HOST=postgres" >> .env
           echo "DB_PORT=5433" >> .env
-          echo "DB_DATABASE=testing" >> .env
+          echo "DB_DATABASE=training" >> .env
           echo "DB_USERNAME=test" >> .env
           echo "DB_PASSWORD=password" >> .env
 
