@@ -19,8 +19,12 @@ jobs:
           POSTGRES_PASSWORD: password
           POSTGRES_DB: training
         ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+          - 5433:5432
+        options: >
+          --health-cmd="pg_isready -U test -d training"
+          --health-interval=10s
+          --health-timeout=10s
+          --health-retries=10
 
     steps:
       - uses: actions/checkout@v4
@@ -42,13 +46,23 @@ jobs:
           echo "APP_ENV=testing" >> .env
           echo "DB_CONNECTION=pgsql" >> .env
           echo "DB_HOST=postgres" >> .env
-          echo "DB_PORT=5432" >> .env
+          echo "DB_PORT=5433" >> .env
           echo "DB_DATABASE=training" >> .env
           echo "DB_USERNAME=test" >> .env
           echo "DB_PASSWORD=password" >> .env
 
-      - name: Check Postgres health
-        run: pg_isready -h postgres -p 5432 -U test || exit 1
+      - name: Wait for Postgres to be ready
+        run: |
+          for i in {1..10}; do
+            if pg_isready -h postgres -p 5433 -U test; then
+              echo "Postgres is ready"
+              exit 0
+            fi
+            echo "Waiting for Postgres..."
+            sleep 5
+          done
+          echo "Postgres did not become ready in time"
+          exit 1
 
       - name: Generate application key
         run: php artisan key:generate
